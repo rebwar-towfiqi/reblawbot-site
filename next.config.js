@@ -6,7 +6,7 @@ const nextConfig = {
   reactStrictMode: true,
   i18n: {
     locales: ['fa', 'en', 'ku'],
-    defaultLocale: 'fa'
+    defaultLocale: 'fa',
     // اگر می‌خواهید localeDetection غیرفعال باشد بنویسید: localeDetection: false
   },
   webpack(config) {

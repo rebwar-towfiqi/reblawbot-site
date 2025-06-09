@@ -1,4 +1,4 @@
-import Head from "next/head";
+import Head from 'next/head';
 
 export default function Contact() {
   return (
@@ -6,22 +6,23 @@ export default function Contact() {
       <Head>
         <title>تماس با ما | RebLawBot</title>
       </Head>
-      <main className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-        <div className="max-w-lg bg-white rounded-2xl shadow p-8 mt-20 text-center">
-          <h1 className="text-2xl font-bold mb-4 text-blue-700">تماس با ما</h1>
-          <p className="text-gray-700 mb-6">
-            برای ارتباط مستقیم با تیم پشتیبانی RebLawBot، سوالات و پیشنهادات خود را از طریق آدرس تلگرام زیر ارسال کنید:
+      <main className='flex min-h-screen flex-col items-center justify-center bg-gray-50'>
+        <div className='mt-20 max-w-lg rounded-2xl bg-white p-8 text-center shadow'>
+          <h1 className='mb-4 text-2xl font-bold text-blue-700'>تماس با ما</h1>
+          <p className='mb-6 text-gray-700'>
+            برای ارتباط مستقیم با تیم پشتیبانی RebLawBot، سوالات و پیشنهادات خود
+            را از طریق آدرس تلگرام زیر ارسال کنید:
           </p>
           <a
-            href="https://t.me/RebLCBot"
-            className="inline-block bg-blue-600 text-white rounded px-6 py-2 text-lg font-semibold shadow hover:bg-blue-700 transition"
-            target="_blank"
-            rel="noopener noreferrer"
+            href='https://t.me/RebLCBot'
+            className='inline-block rounded bg-blue-600 px-6 py-2 text-lg font-semibold text-white shadow transition hover:bg-blue-700'
+            target='_blank'
+            rel='noopener noreferrer'
           >
             ارتباط در تلگرام
           </a>
-          <p className="text-gray-500 mt-6 text-sm">
-            یا ایمیل: <span className="select-all">reblawbot@proton.me</span>
+          <p className='mt-6 text-sm text-gray-500'>
+            یا ایمیل: <span className='select-all'>reblawbot@proton.me</span>
           </p>
         </div>
       </main>
