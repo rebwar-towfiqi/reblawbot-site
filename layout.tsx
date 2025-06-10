@@ -1,5 +1,5 @@
 // app/[locale]/layout.tsx
-import { NextIntlClientProvider, useMessages } from 'next-intl'
+import { NextIntlClientProvider } from 'next-intl';
 import { ReactNode } from 'react'
 
 import '../globals.css'
