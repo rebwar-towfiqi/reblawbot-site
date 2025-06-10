@@ -1,15 +1,15 @@
 // app/[locale]/layout.tsx
 import { NextIntlClientProvider } from 'next-intl';
-import { ReactNode } from 'react'
+import { ReactNode } from 'react';
 
-import '../globals.css'
+import '../globals.css';
 
 export default async function LocaleLayout({
   children,
   params: { locale },
 }: {
-  children: ReactNode
-  params: { locale: string }
+  children: ReactNode;
+  params: { locale: string };
 }) {
   const messages = (await import(`../../locales/${locale}/common.json`)).default;
 
@@ -21,5 +21,5 @@ export default async function LocaleLayout({
         </NextIntlClientProvider>
       </body>
     </html>
-  )
+  );
 }
