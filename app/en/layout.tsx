@@ -1,8 +1,8 @@
-// app/fa/layout.tsx (و مشابه در en و ku و fa)
+// app/fa/layout.tsx (و مشابه در en و ku)
 import { NextIntlClientProvider } from 'next-intl';
 import { ReactNode } from 'react';
 
-import '../../globals.css'; // یک مرحله بالاتر
+import '../../../src/styles/globals.css'; // مسیر جدید صحیح
 
 export default async function LocaleLayout({
   children,
@@ -11,7 +11,7 @@ export default async function LocaleLayout({
   children: ReactNode;
   params: { locale: string };
 }) {
-  const messages = (await import(`../../locales/${locale}/common.json`))
+  const messages = (await import(`../../../locales/${locale}/common.json`))
     .default;
 
   return (
