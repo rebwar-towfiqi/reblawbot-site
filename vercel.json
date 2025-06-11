@@ -9,5 +9,10 @@
         }
       ]
     }
-  ]
+  ],
+  "build": {
+    "env": {
+      "NEXT_IGNORE_CACHE": "true"
+    }
+  }
 }

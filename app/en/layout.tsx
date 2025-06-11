@@ -1,17 +1,28 @@
-// app/fa/layout.tsx (و مشابه در en و ku)
+import messages from '@locales/en/common.json';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { ReactNode } from 'react';
 
-import '@/styles/globals.css';
+import '../../src/styles/globals.css';
 
-export default async function LocaleLayout({
+export const metadata: Metadata = {
+  title: 'RebLawBot',
+  description: 'Legal AI Assistant',
+};
+
+export function generateStaticParams() {
+  return [{ locale: 'en' }];
+}
+
+export default function LocaleLayout({
   children,
   params: { locale },
 }: {
   children: ReactNode;
   params: { locale: string };
 }) {
-  const messages = (await import(`@locales/${locale}/common.json`)).default;
+  if (locale !== 'en') notFound();
 
   return (
     <html lang={locale}>
