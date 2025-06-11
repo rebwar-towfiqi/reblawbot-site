@@ -2,7 +2,7 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { ReactNode } from 'react';
 
-import '../../../src/styles/globals.css'; // مسیر جدید صحیح
+import '@/styles/globals.css';
 
 export default async function LocaleLayout({
   children,
@@ -11,8 +11,7 @@ export default async function LocaleLayout({
   children: ReactNode;
   params: { locale: string };
 }) {
-  const messages = (await import(`../../../locales/${locale}/common.json`))
-    .default;
+  const messages = (await import(`@locales/${locale}/common.json`)).default;
 
   return (
     <html lang={locale}>
