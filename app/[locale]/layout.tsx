@@ -1,31 +1,26 @@
 // app/[locale]/layout.tsx
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
 import { ReactNode } from 'react';
 
-import '@/styles/globals.css';
+import { getMessages } from '@/lib/messages';
 
-export async function generateStaticParams() {
-  return ['en', 'fa', 'ku'].map((locale) => ({ locale }));
-}
+import { locales } from '@/i18n';
 
-interface LocaleLayoutProps {
+type Props = {
   children: ReactNode;
   params: { locale: string };
+};
 
-}
+export default async function LocaleLayout({ children, params: { locale } }: Props) {
+  if (!locales.includes(locale)) {
+    notFound();
+  }
 
-export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
-  const { locale } = params;
-
-  const supportedLocales = ['en', 'fa', 'ku'];
-  if (!supportedLocales.includes(locale)) notFound();
-
-  const messages = await getMessages({ locale });
+  const messages = await getMessages(locale);
 
   return (
-    <html lang={locale} dir={locale === 'fa' || locale === 'ku' ? 'rtl' : 'ltr'}>
+    <html lang={locale}>
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
