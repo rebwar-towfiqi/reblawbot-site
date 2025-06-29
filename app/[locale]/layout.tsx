@@ -1,20 +1,31 @@
-// app/fa/layout.tsx (و مشابه در en و ku)
+// app/[locale]/layout.tsx
+import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
 import { ReactNode } from 'react';
 
 import '@/styles/globals.css';
 
-export default async function LocaleLayout({
-  children,
-  params: { locale },
-}: {
+export async function generateStaticParams() {
+  return ['en', 'fa', 'ku'].map((locale) => ({ locale }));
+}
+
+interface LocaleLayoutProps {
   children: ReactNode;
   params: { locale: string };
-}) {
-  const messages = (await import(`@locales/${locale}/common.json`)).default;
+
+}
+
+export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
+  const { locale } = params;
+
+  const supportedLocales = ['en', 'fa', 'ku'];
+  if (!supportedLocales.includes(locale)) notFound();
+
+  const messages = await getMessages({ locale });
 
   return (
-    <html lang={locale}>
+    <html lang={locale} dir={locale === 'fa' || locale === 'ku' ? 'rtl' : 'ltr'}>
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
