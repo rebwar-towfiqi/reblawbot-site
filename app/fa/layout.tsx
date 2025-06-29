@@ -1,31 +1,31 @@
-import messages from '@locales/ku/common.json';
+// app/[locale]/layout.tsx
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
-import { ReactNode } from 'react';
+import { getMessages } from 'next-intl/server';
 
-import '../../src/styles/globals.css';
+import '@/styles/globals.css';
 
 export const metadata: Metadata = {
-  title: 'RebLawBot',
-  description: 'یارمەتیدەری دەروونی یاسایی',
+  title: 'RebLawBot – دستیار حقوقی چندزبانه با هوش مصنوعی',
 };
 
-export function generateStaticParams() {
-  return [{ locale: 'ku' }];
-}
-
-export default function LocaleLayout({
+export default async function LocaleLayout({
   children,
   params: { locale },
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
   params: { locale: string };
 }) {
-  if (locale !== 'ku') notFound();
+  let messages;
+  try {
+    messages = await getMessages({ locale });
+  } catch (error) {
+    notFound(); // اگر زبان اشتباه بود، صفحه 404 نشان دهد
+  }
 
   return (
-    <html lang={locale}>
+    <html lang={locale} dir={locale === 'en' ? 'ltr' : 'rtl'}>
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
