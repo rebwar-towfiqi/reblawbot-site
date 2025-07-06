@@ -16,7 +16,7 @@
     "autoprefixer": "^10.4.19",
     "clsx": "^2.1.0",
     "next": "15.3.3",
-    "next-intl": "^4.12.0",
+    "next-intl": "^4.10.2",
     "postcss": "^8.4.38",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
