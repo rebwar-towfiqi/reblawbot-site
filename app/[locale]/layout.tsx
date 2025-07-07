@@ -9,7 +9,7 @@ import { locales } from '@/i18n';
 
 type Props = {
   children: ReactNode;
-  params: { locale: string };
+  params: { locale: typeof locales[number] };
 };
 
 export default async function LocaleLayout({ children, params: { locale } }: Props) {
