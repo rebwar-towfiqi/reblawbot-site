@@ -7,7 +7,7 @@ export default function AskPage() {
   const [name, setName] = useState('');
   const [question, setQuestion] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>(
-    'idle'
+    'idle',
   );
 
   const handleSubmit = async (e: React.FormEvent) => {

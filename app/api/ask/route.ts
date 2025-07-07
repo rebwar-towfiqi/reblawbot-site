@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
   if (!question || question.trim().length === 0) {
     return NextResponse.json(
       { error: 'سؤال نمی‌تواند خالی باشد.' },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
   if (!botToken || !adminChatId) {
     return NextResponse.json(
       { error: 'تنظیمات محیطی یافت نشد.' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
   if (!data.ok) {
     return NextResponse.json(
       { error: 'خطا در ارسال پیام به تلگرام.' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
