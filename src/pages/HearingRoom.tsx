@@ -9,98 +9,110 @@ const HearingRoom: React.FC = () => {
   const [message, setMessage] = useState("");
 
   const userRole = localStorage.getItem("userRole");
-
+ 
   const caseId = localStorage.getItem("selectedCaseId");
 
-  if (!caseId) {
-  // اگر پرونده‌ای انتخاب نشده
-  return <p>لطفاً ابتدا یک پرونده انتخاب کنید.</p>;
-}
-  
- useEffect(() => {
-  if (!userRole || !caseId) {
-    navigate("/"); // بازگشت به صفحه اول اگر اطلاعات ناقص بود
-    return;
-  }
-
-  const fetchCaseText = async () => {
-    try {
-      const res = await fetch(`http://localhost:4000/api/case/${caseId}`);
-      if (!res.ok) throw new Error("Failed to fetch");
-      const data = await res.json();
-      setCaseText(data.full_text || "متن پرونده یافت نشد.");
-    } catch (error) {
-      console.error("خطا در دریافت متن پرونده:", error);
-      setCaseText("خطا در بارگذاری پرونده.");
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (!userRole || !caseId) {
+      navigate("/"); // بازگشت به صفحه اول اگر اطلاعات ناقص بود
+      return;
     }
-  };
 
-  fetchCaseText();
-}, [userRole, caseId, navigate]);
+    const fetchCaseText = async () => {
+      try {
+        const res = await fetch(`http://localhost:4000/api/case/${caseId}`);
+        if (!res.ok) throw new Error("Failed to fetch");
+        const data = await res.json();
+        setCaseText(data.full_text || "متن پرونده یافت نشد.");
+      } catch (error) {
+        setCaseText("خطا در بارگذاری پرونده.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCaseText();
+  }, [userRole, caseId, navigate]);
+
+  const handleVote = async () => {
+    if (!selectedVote || !caseId) return;
 
 
-  const handleVote = async (vote: string) => {
-    setSelectedVote(vote);
+    
     try {
-      const res = await fetch("/api/vote", {
+      const res = await fetch("http://localhost:4000/api/vote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          caseId: Number(caseId),
+          case_id: caseId,
+          vote: selectedVote,
           role: userRole,
-          vote: vote,
+    
         }),
       });
 
-      const result = await res.json();
+    
       if (res.ok) {
         setMessage("✅ رأی شما با موفقیت ثبت شد.");
       } else {
-        setMessage(`❌ خطا: ${result.message}`);
+        setMessage("❌ خطا در ثبت رأی.");
       }
-    } catch (error) {
-      console.error("خطا در ارسال رأی:", error);
+    } catch {
       setMessage("❌ خطا در ارتباط با سرور.");
     }
   };
 
   return (
-    <div className="p-4 max-w-3xl mx-auto">
-      <h1 className="text-xl font-bold mb-4">🧑‍⚖️ جلسه رسیدگی</h1>
-      <p className="text-sm text-gray-600 mb-2">نقش شما: {userRole}</p>
+    <div className="p-6 max-w-3xl mx-auto">
+      <h1 className="text-xl font-bold mb-4">🧾 جلسه رسیدگی</h1>
 
-      {loading ? (
-        <p>در حال بارگذاری متن پرونده...</p>
+      {!caseId && !loading ? (
+        <p>لطفاً ابتدا یک پرونده انتخاب کنید.</p>
+      ) : loading ? (
+        <p>در حال بارگذاری پرونده...</p>
       ) : (
-        <div className="bg-white p-4 rounded shadow mb-4 whitespace-pre-line">
-          {caseText}
-        </div>
+        <>
+          <p className="whitespace-pre-wrap bg-gray-100 p-4 rounded text-justify mb-4">
+            {caseText}
+          </p>
+
+          <div className="space-y-2">
+            <label className="block font-medium">✋ انتخاب رأی:</label>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setSelectedVote("guilty")}
+                className={`px-4 py-2 rounded ${
+                  selectedVote === "guilty"
+                    ? "bg-red-500 text-white"
+                    : "bg-white border"
+                }`}
+              >
+                مجرم است
+              </button>
+              <button
+                onClick={() => setSelectedVote("innocent")}
+                className={`px-4 py-2 rounded ${
+                  selectedVote === "innocent"
+                    ? "bg-green-500 text-white"
+                    : "bg-white border"
+                }`}
+              >
+                بی‌گناه است
+              </button>
+            </div>
+
+            <button
+              onClick={handleVote}
+              disabled={!selectedVote}
+              className="mt-4 px-6 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+            >
+              ثبت رأی
+            </button>
+
+            {message && <p className="mt-3 text-sm text-gray-700">{message}</p>}
+          </div>
+        </>
       )}
-
-      <div className="flex gap-4 mb-2">
-        <button
-          onClick={() => handleVote("بی‌گناه")}
-          className={`px-4 py-2 rounded ${
-            selectedVote === "بی‌گناه"
-              ? "bg-green-600 text-white"
-              : "bg-gray-200"
-          }`}
-        >
-          بی‌گناه
-        </button>
-        <button
-          onClick={() => handleVote("مجرم")}
-          className={`px-4 py-2 rounded ${
-            selectedVote === "مجرم" ? "bg-red-600 text-white" : "bg-gray-200"
-          }`}
-        >
-          مجرم
-        </button>
-      </div>
-
-      {message && <p className="text-sm mt-2">{message}</p>}
     </div>
   );
 };
