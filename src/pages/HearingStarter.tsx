@@ -1,6 +1,9 @@
 // src/pages/HearingStarter.tsx
+"use client";
+
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+
 import Dashboard from "../components/Dashboard";
 
 interface GameHistoryEntry {
@@ -9,7 +12,7 @@ interface GameHistoryEntry {
 }
 
 const HearingStarter: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [userPoints, setUserPoints] = useState(0);
   const [totalPoints, setTotalPoints] = useState(0);
   const [history, setHistory] = useState<GameHistoryEntry[]>([]);
@@ -29,7 +32,7 @@ const HearingStarter: React.FC = () => {
   }, []);
 
   const startHearing = () => {
-    navigate("/hearing-room?id=1");
+    router.push("/hearing-room?id=1");
   };
 
   return (
