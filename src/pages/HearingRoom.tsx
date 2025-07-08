@@ -3,7 +3,6 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
-
 const HearingRoom: React.FC = () => {
   const router = useRouter();
   const [caseText, setCaseText] = useState('');
@@ -11,8 +10,12 @@ const HearingRoom: React.FC = () => {
   const [selectedVote, setSelectedVote] = useState('');
   const [message, setMessage] = useState('');
 
-  const userRole = typeof window !== 'undefined' ? localStorage.getItem('userRole') : null;
-  const caseId = typeof window !== 'undefined' ? localStorage.getItem('selectedCaseId') : null;
+  const userRole =
+    typeof window !== 'undefined' ? localStorage.getItem('userRole') : null;
+  const caseId =
+    typeof window !== 'undefined'
+      ? localStorage.getItem('selectedCaseId')
+      : null;
 
   useEffect(() => {
     if (!userRole || !caseId) {
