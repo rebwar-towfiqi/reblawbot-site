@@ -1,10 +1,10 @@
 // src/pages/HearingStarter.tsx
-"use client";
+'use client';
 
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
 
-import Dashboard from "../components/Dashboard";
+import Dashboard from '../components/Dashboard';
 
 interface GameHistoryEntry {
   date: string;
@@ -26,31 +26,32 @@ const HearingStarter: React.FC = () => {
 
     // شبیه‌سازی دریافت تاریخچه کاربر
     setHistory([
-      { date: "2025-06-25", points: 5 },
-      { date: "2025-06-27", points: 10 },
+      { date: '2025-06-25', points: 5 },
+      { date: '2025-06-27', points: 10 },
     ]);
   }, []);
 
   const startHearing = () => {
-    router.push("/hearing-room?id=1");
+    router.push('/hearing-room?id=1');
   };
 
   return (
-    <div className="p-4 flex flex-col items-center gap-6">
+    <div className='p-4 flex flex-col items-center gap-6'>
       <Dashboard
         totalPoints={totalPoints}
         userPoints={userPoints}
         history={history}
       />
 
-      <h1 className="text-2xl font-bold">🎯 شروع جلسه رسیدگی</h1>
-      <p className="text-center text-sm text-gray-600 max-w-md">
-        برای شروع رسیدگی به پرونده، روی دکمه زیر کلیک کنید. در طول جلسه می‌توانید به استدلال بپردازید و رأی هیئت منصفه را دریافت کنید.
+      <h1 className='text-2xl font-bold'>🎯 شروع جلسه رسیدگی</h1>
+      <p className='text-center text-sm text-gray-600 max-w-md'>
+        برای شروع رسیدگی به پرونده، روی دکمه زیر کلیک کنید. در طول جلسه
+        می‌توانید به استدلال بپردازید و رأی هیئت منصفه را دریافت کنید.
       </p>
 
       <button
         onClick={startHearing}
-        className="bg-blue-600 text-white px-6 py-2 rounded-xl shadow hover:bg-blue-700 transition"
+        className='bg-blue-600 text-white px-6 py-2 rounded-xl shadow hover:bg-blue-700 transition'
       >
         🚀 ورود به جلسه رسیدگی
       </button>

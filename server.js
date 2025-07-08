@@ -59,7 +59,6 @@ app.get('/api/case/:id', (req, res) => {
   });
 });
 
-
 // API: ثبت رأی
 app.post('/api/vote', (req, res) => {
   const { caseId, role, vote } = req.body;
