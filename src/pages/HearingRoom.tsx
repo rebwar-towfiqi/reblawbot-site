@@ -1,26 +1,28 @@
+'use client';
+
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 
 const HearingRoom: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [caseText, setCaseText] = useState('');
   const [loading, setLoading] = useState(true);
   const [selectedVote, setSelectedVote] = useState('');
   const [message, setMessage] = useState('');
 
-  const userRole = localStorage.getItem('userRole');
-
-  const caseId = localStorage.getItem('selectedCaseId');
+  const userRole = typeof window !== 'undefined' ? localStorage.getItem('userRole') : null;
+  const caseId = typeof window !== 'undefined' ? localStorage.getItem('selectedCaseId') : null;
 
   useEffect(() => {
     if (!userRole || !caseId) {
-      navigate('/'); // بازگشت به صفحه اول اگر اطلاعات ناقص بود
+      router.push('/'); // بازگشت به خانه
       return;
     }
 
     const fetchCaseText = async () => {
       try {
-        const res = await fetch(`http://localhost:4000/api/case/${caseId}`);
+        const res = await fetch(`/api/case/${caseId}`);
         if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
         setCaseText(data.full_text || 'متن پرونده یافت نشد.');
@@ -32,13 +34,13 @@ const HearingRoom: React.FC = () => {
     };
 
     fetchCaseText();
-  }, [userRole, caseId, navigate]);
+  }, [userRole, caseId, router]);
 
   const handleVote = async () => {
     if (!selectedVote || !caseId) return;
 
     try {
-      const res = await fetch('http://localhost:4000/api/vote', {
+      const res = await fetch('/api/vote', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
