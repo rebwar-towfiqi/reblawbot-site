@@ -1,19 +1,13 @@
 {
-  "name": "RebLaw Legal Debate Game",
+  "name": "@RebLCBot Legal Debate Game",
   "short_name": "RebLawGame",
-  "description": "بازی حقوقی مبتنی بر استدلال و رأی‌گیری",
   "start_url": "/game/index.html",
-  "scope": "/game/",
   "display": "standalone",
-  "theme_color": "#1E40AF",
-  "background_color": "#FFFFFF",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a",
   "orientation": "portrait",
+  "description": "A legal debate game powered by @RebLCBot.",
   "icons": [
-    {
-      "src": "/game/icon.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
     {
       "src": "/game/icon.png",
       "sizes": "512x512",

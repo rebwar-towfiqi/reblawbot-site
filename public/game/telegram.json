@@ -1,11 +1,13 @@
 {
-  "name": "RebLaw Legal Game",
+  "name": "RebLaw Game",
+  "description": "Legal Debate Game powered by RebLawCoin (RLC)",
   "short_name": "RebLawGame",
-  "description": "مینی‌اپ حقوقی برای رأی‌گیری و تحلیل پرونده‌ها",
-  "start_param": "start_game",
-  "url": "https://reblawbot.com/game",
-  "icon_url": "https://reblawbot.com/game/icon.png",
-  "color_scheme": "dark",
-  "platform": "webapp",
-  "version": "1.0.0"
+  "start_url": "/game/index.html",
+  "icons": [
+    {
+      "src": "/game/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
