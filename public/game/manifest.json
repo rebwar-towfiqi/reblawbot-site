@@ -1,9 +1,16 @@
 {
-  "name": "بازی دادگاه",
-  "description": "در نقش قاضی یا وکیل، عدالت را اجرا کن",
+  "name": "RebLaw Legal Game",
   "short_name": "RebLawGame",
-  "photo_url": "https://reblawbot.com/logo512.png",
-  "bot_username": "RebLawBot",
-  "color": "#1E40AF",
-  "url": "https://reblawbot.com/game"
+  "start_url": "/game/",
+  "display": "fullscreen",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "description": "بازی مناظره حقوقی با RebLawCoin",
+  "icons": [
+    {
+      "src": "/game/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
 }
