@@ -3,7 +3,7 @@ import path from 'path'
 import { open } from 'sqlite'
 import sqlite3 from 'sqlite3'
 
-// مسیر فایل دیتابیس در پروژه
+
 const DB_PATH = path.resolve(process.cwd(), 'src/data/game_cases.db')
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       driver: sqlite3.Database,
     })
 
-    const result = await db.get('SELECT * FROM cases WHERE id = ?', id)
+    const result = await db.get('SELECT * FROM game_cases WHERE id = ?', id)
 
     if (!result) {
       return res.status(404).json({ error: 'پرونده‌ای با این شناسه پیدا نشد.' })
