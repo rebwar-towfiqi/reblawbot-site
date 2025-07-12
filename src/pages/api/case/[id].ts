@@ -19,7 +19,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       driver: sqlite3.Database,
     })
 
-    const result = await db.get('SELECT * FROM game_cases WHERE id = ?', id)
+    // استفاده از جدول واقعی شما: famous_cases
+    const result = await db.get('SELECT * FROM famous_cases WHERE id = ?', id)
 
     if (!result) {
       return res.status(404).json({ error: 'پرونده‌ای با این شناسه پیدا نشد.' })
