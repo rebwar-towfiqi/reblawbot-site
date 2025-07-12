@@ -1,26 +1,27 @@
-import { useNavigate } from "react-router-dom";
+
 import { motion } from "framer-motion";
 // @ts-ignore
-import { FaGavel, FaUserShield, FaUserGraduate } from "react-icons/fa";
+import { FaGavel, FaUserShield, FaUserTie } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const roles = [
+  {
+    id: "plaintiff_lawyer",
+    label: "وکیل شاکی",
+    icon: FaUserTie,
+    description: "از حقوق شاکی دفاع کن و متهم را محکوم جلوه بده.",
+  },
+  {
+    id: "defender_lawyer",
+    label: "وکیل متهم",
+    icon: FaUserShield,
+    description: "از متهم دفاع کن و بی‌گناهی‌اش را اثبات کن.",
+  },
   {
     id: "judge",
     label: "قاضی",
     icon: FaGavel,
-    description: "نقش بی‌طرف برای مدیریت دادگاه و صدور رأی نهایی.",
-  },
-  {
-    id: "defender",
-    label: "مدافع",
-    icon: FaUserShield,
-    description: "از حقوق متهم دفاع کن و استدلال قانونی ارائه بده.",
-  },
-  {
-    id: "prosecutor",
-    label: "دادستان",
-    icon: FaUserGraduate,
-    description: "با دلایل محکم تلاش کن متهم را مجرم جلوه بده.",
+    description: "بی‌طرفانه جلسه را مدیریت و رأی نهایی را صادر کن.",
   },
 ];
 
