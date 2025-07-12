@@ -1,121 +1,143 @@
-'use client';
+// src/pages/game/hearing-room.tsx
+'use client'
 
-import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import axios from 'axios'
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Tooltip,
+} from 'chart.js'
+import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
+import { Bar, Pie } from 'react-chartjs-2'
 
-const HearingRoom: React.FC = () => {
-  const router = useRouter();
-  const [caseText, setCaseText] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [selectedVote, setSelectedVote] = useState('');
-  const [message, setMessage] = useState('');
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement)
 
-  const userRole =
-    typeof window !== 'undefined' ? localStorage.getItem('userRole') : null;
-  const caseId =
-    typeof window !== 'undefined'
-      ? localStorage.getItem('selectedCaseId')
-      : null;
+type Stats = {
+  plaintiff: number
+  defendant: number
+  neutral: number
+}
+
+type CaseData = {
+  title: string
+  summary: string
+}
+
+export default function HearingRoom() {
+  const router = useRouter()
+  const { caseId } = router.query
+  const [caseData, setCaseData] = useState<CaseData | null>(null)
+  const [vote, setVote] = useState('')
+  const [argument, setArgument] = useState('')
+  const [stats, setStats] = useState<Stats | null>(null)
 
   useEffect(() => {
-    if (!userRole || !caseId) {
-      router.push('/'); // بازگشت به خانه
-      return;
+    if (caseId) {
+      axios.get(`/api/case/${caseId}`).then(res => setCaseData(res.data))
+      axios.get(`/api/argument/stats/${caseId}`).then(res => setStats(res.data))
     }
+  }, [caseId])
 
-    const fetchCaseText = async () => {
-      try {
-        const res = await fetch(`/api/case/${caseId}`);
-        if (!res.ok) throw new Error('Failed to fetch');
-        const data = await res.json();
-        setCaseText(data.full_text || 'متن پرونده یافت نشد.');
-      } catch (error) {
-        setCaseText('خطا در بارگذاری پرونده.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const handleSubmit = async () => {
+    if (!vote || !argument) return alert('هم رأی و هم استدلال را وارد کنید.')
 
-    fetchCaseText();
-  }, [userRole, caseId, router]);
+    await axios.post('/api/argument', {
+      case_id: caseId,
+      vote,
+      argument,
+    })
 
-  const handleVote = async () => {
-    if (!selectedVote || !caseId) return;
+    alert('✅ رأی شما با موفقیت ثبت شد!')
+    setVote('')
+    setArgument('')
+    const res = await axios.get(`/api/argument/stats/${caseId}`)
+    setStats(res.data)
+  }
 
-    try {
-      const res = await fetch('/api/vote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          case_id: caseId,
-          vote: selectedVote,
-          role: userRole,
-        }),
-      });
+  const pieData = stats && {
+    labels: ['شاکی', 'متهم', 'ممتنع'],
+    datasets: [
+      {
+        data: [stats.plaintiff, stats.defendant, stats.neutral],
+        backgroundColor: ['#f87171', '#60a5fa', '#a3a3a3'],
+      },
+    ],
+  }
 
-      if (res.ok) {
-        setMessage('✅ رأی شما با موفقیت ثبت شد.');
-      } else {
-        setMessage('❌ خطا در ثبت رأی.');
-      }
-    } catch {
-      setMessage('❌ خطا در ارتباط با سرور.');
-    }
-  };
+  const barData = stats && {
+    labels: ['شاکی', 'متهم', 'ممتنع'],
+    datasets: [
+      {
+        label: 'تعداد آرا',
+        data: [stats.plaintiff, stats.defendant, stats.neutral],
+        backgroundColor: ['#f87171', '#60a5fa', '#a3a3a3'],
+      },
+    ],
+  }
 
   return (
-    <div className='p-6 max-w-3xl mx-auto'>
-      <h1 className='text-xl font-bold mb-4'>🧾 جلسه رسیدگی</h1>
-
-      {!caseId && !loading ? (
-        <p>لطفاً ابتدا یک پرونده انتخاب کنید.</p>
-      ) : loading ? (
-        <p>در حال بارگذاری پرونده...</p>
-      ) : (
+    <div className="p-4 max-w-4xl mx-auto">
+      {caseData ? (
         <>
-          <p className='whitespace-pre-wrap bg-gray-100 p-4 rounded text-justify mb-4'>
-            {caseText}
-          </p>
+          <h1 className="text-xl font-bold mb-4">{caseData.title}</h1>
+          <p className="mb-6 whitespace-pre-line text-justify">{caseData.summary}</p>
 
-          <div className='space-y-2'>
-            <label className='block font-medium'>✋ انتخاب رأی:</label>
-            <div className='flex gap-4'>
-              <button
-                onClick={() => setSelectedVote('guilty')}
-                className={`px-4 py-2 rounded ${
-                  selectedVote === 'guilty'
-                    ? 'bg-red-500 text-white'
-                    : 'bg-white border'
-                }`}
-              >
-                مجرم است
-              </button>
-              <button
-                onClick={() => setSelectedVote('innocent')}
-                className={`px-4 py-2 rounded ${
-                  selectedVote === 'innocent'
-                    ? 'bg-green-500 text-white'
-                    : 'bg-white border'
-                }`}
-              >
-                بی‌گناه است
-              </button>
-            </div>
-
-            <button
-              onClick={handleVote}
-              disabled={!selectedVote}
-              className='mt-4 px-6 py-2 bg-blue-600 text-white rounded disabled:opacity-50'
+          <div className="mb-4">
+            <label htmlFor="voteSelect" className="block mb-1 font-semibold">رأی شما:</label>
+            <select
+              id="voteSelect"
+              className="w-full border p-2 rounded"
+              value={vote}
+              onChange={e => setVote(e.target.value)}
             >
-              ثبت رأی
-            </button>
-
-            {message && <p className='mt-3 text-sm text-gray-700'>{message}</p>}
+              <option value="">انتخاب کنید</option>
+              <option value="plaintiff">به نفع شاکی</option>
+              <option value="defendant">به نفع متهم</option>
+              <option value="neutral">رأی ممتنع</option>
+            </select>
           </div>
+
+          <div className="mb-4">
+            <label htmlFor="argumentBox" className="block mb-1 font-semibold">استدلال شما:</label>
+            <textarea
+              id="argumentBox"
+              className="w-full border p-2 rounded"
+              rows={4}
+              title="استدلال خود را وارد کنید"
+              placeholder="برای مثال: طبق ماده ۱۰ قانون مدنی ..."
+              value={argument}
+              onChange={e => setArgument(e.target.value)}
+            />
+          </div>
+
+          <button
+            onClick={handleSubmit}
+            className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+          >
+            ثبت رأی
+          </button>
+
+          {stats && (
+            <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h2 className="font-semibold text-center mb-2">نمودار دایره‌ای</h2>
+                <Pie data={pieData} />
+              </div>
+              <div>
+                <h2 className="font-semibold text-center mb-2">نمودار میله‌ای</h2>
+                <Bar data={barData} />
+              </div>
+            </div>
+          )}
         </>
+      ) : (
+        <p>در حال بارگذاری پرونده...</p>
       )}
     </div>
-  );
-};
-
-export default HearingRoom;
+  )
+}
