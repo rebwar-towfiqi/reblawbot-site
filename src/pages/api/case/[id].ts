@@ -1,25 +1,33 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next'
+import path from 'path'
+import { open } from 'sqlite'
+import sqlite3 from 'sqlite3'
 
-const cases = [
-  {
-    id: 1,
-    title: 'پرونده نمونه - سرقت از بانک',
-    summary: 'در این پرونده، یک متهم به سرقت بانک در سال 1402 وجود دارد.',
-    full_text:
-      'متن کامل این پرونده بسیار پیچیده و شامل اعترافات شاهدین و متهم است...',
-  },
-  // سایر پرونده‌ها...
-];
+// مسیر فایل دیتابیس در پروژه
+const DB_PATH = path.resolve(process.cwd(), 'src/data/game_cases.db')
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
-  const caseId = parseInt(id as string);
-  const legalCase = cases.find((c) => c.id === caseId);
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const { id } = req.query
 
-  if (!legalCase) {
-    res.status(404).json({ error: 'Case not found' });
-    return;
+  if (!id || Array.isArray(id)) {
+    return res.status(400).json({ error: 'شناسه نامعتبر است.' })
   }
 
-  res.status(200).json(legalCase);
+  try {
+    const db = await open({
+      filename: DB_PATH,
+      driver: sqlite3.Database,
+    })
+
+    const result = await db.get('SELECT * FROM cases WHERE id = ?', id)
+
+    if (!result) {
+      return res.status(404).json({ error: 'پرونده‌ای با این شناسه پیدا نشد.' })
+    }
+
+    res.status(200).json(result)
+  } catch (error) {
+    console.error('❌ خطا در اتصال به دیتابیس:', error)
+    res.status(500).json({ error: 'خطا در سرور یا اتصال به پایگاه داده.' })
+  }
 }
