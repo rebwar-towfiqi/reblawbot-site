@@ -1,69 +1,37 @@
+"use client";
 
 import { motion } from "framer-motion";
-// @ts-ignore
-import { FaGavel, FaUserShield, FaUserTie } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/router";
+import React from "react";
 
 const roles = [
-  {
-    id: "plaintiff_lawyer",
-    label: "وکیل شاکی",
-    icon: FaUserTie,
-    description: "از حقوق شاکی دفاع کن و متهم را محکوم جلوه بده.",
-  },
-  {
-    id: "defender_lawyer",
-    label: "وکیل متهم",
-    icon: FaUserShield,
-    description: "از متهم دفاع کن و بی‌گناهی‌اش را اثبات کن.",
-  },
-  {
-    id: "judge",
-    label: "قاضی",
-    icon: FaGavel,
-    description: "بی‌طرفانه جلسه را مدیریت و رأی نهایی را صادر کن.",
-  },
+  { id: "plaintiff", label: "🧑‍💼 وکیل شاکی" },
+  { id: "defender", label: "👨‍⚖️ وکیل متهم" },
+  { id: "judge", label: "⚖️ قاضی دادگاه" },
 ];
 
 export default function RoleSelector() {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleSelect = (roleId: string) => {
-    navigate(`/case-selection?role=${roleId}`);
+    router.push(`/game/case-selection?role=${roleId}`);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        <motion.h1
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-3xl font-bold text-center text-blue-800 mb-10"
-        >
-          🎭 انتخاب نقش شما در بازی حقوقی
-        </motion.h1>
-
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {roles.map((role, index) => {
-            const Icon = role.icon;
-            return (
-              <motion.div
-                key={role.id}
-                whileHover={{ scale: 1.05 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                onClick={() => handleSelect(role.id)}
-                className="cursor-pointer bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition"
-              >
-                {/* @ts-ignore */}
-                <Icon className="text-3xl text-blue-600 mb-3" />
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">{role.label}</h2>
-                <p className="text-sm text-gray-600">{role.description}</p>
-              </motion.div>
-            );
-          })}
-        </div>
+    <div className="flex flex-col items-center gap-6 mt-10">
+      <h2 className="text-xl font-bold text-blue-300">نقش خود را انتخاب کنید</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {roles.map((role) => (
+          <motion.button
+            key={role.id}
+            onClick={() => handleSelect(role.id)}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-gray-800 px-6 py-4 rounded-lg text-white font-semibold shadow-md hover:bg-gray-700"
+          >
+            {role.label}
+          </motion.button>
+        ))}
       </div>
     </div>
   );
