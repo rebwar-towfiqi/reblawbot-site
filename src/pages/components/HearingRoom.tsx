@@ -1,189 +1,165 @@
-// src/pages/HearingRoom.tsx
+'use client';
+
 import axios from 'axios';
 import {
   ArcElement,
-  BarElement,
-  CategoryScale,
   Chart as ChartJS,
   Legend,
-  LinearScale,
-  Title,
-  Tooltip,
-} from 'chart.js';
+  Tooltip} from 'chart.js';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Bar,Pie } from 'react-chartjs-2';
-import { useLocation } from 'react-router-dom';
+import { Pie } from 'react-chartjs-2';
 
-ChartJS.register(
-  ArcElement,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-);
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+type CaseData = {
+  id: number;
+  title: string;
+  summary: string;
+};
+
+type Stats = {
+  plaintiff: number;
+  defendant: number;
+  neutral: number;
+};
 
 export default function HearingRoom() {
-  const [caseData, setCaseData] = useState<any | null>(null);
-  const [stats, setStats] = useState({ plaintiff: 0, defender: 0 });
+  const router = useRouter();
+  const { caseId, role } = router.query;
+
+  const [caseData, setCaseData] = useState<CaseData | null>(null);
   const [vote, setVote] = useState<string>('');
   const [argument, setArgument] = useState<string>('');
-  const [loading, setLoading] = useState(true);
-  const [submitted, setSubmitted] = useState(false);
-
-  const caseId = new URLSearchParams(window.location.search).get('caseId');
+  const [message, setMessage] = useState<string>('');
+  const [stats, setStats] = useState<Stats>({
+    plaintiff: 0,
+    defendant: 0,
+    neutral: 0
+  });
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [caseRes, statRes] = await Promise.all([
-          axios.get(`/api/case/${caseId}`),
-          axios.get(`/api/argument/stats/${caseId}`),
-        ]);
-        setCaseData(caseRes.data);
-        setStats(statRes.data);
-      } catch (error) {
-        console.error('❌ خطا در دریافت اطلاعات:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    if (caseId) {
+      axios
+        .get(`/api/case/${caseId}`)
+        .then((res) => setCaseData(res.data))
+        .catch(() => setMessage('❌ خطا در بارگذاری پرونده.'));
+    }
+  }, [caseId]);
+
+  useEffect(() => {
+    if (caseId) {
+      axios
+        .get(`/api/argument?caseId=${caseId}`)
+        .then((res) => setStats(res.data))
+        .catch(() => setMessage('❌ خطا در دریافت آمار.'));
+    }
   }, [caseId]);
 
   const handleSubmit = async () => {
-    if (!vote || !argument) {
-      alert('لطفاً رأی و استدلال خود را وارد کنید.');
+    if (!vote || !argument.trim()) {
+      setMessage('لطفاً رأی و استدلال خود را وارد کنید.');
       return;
     }
+
     try {
       await axios.post('/api/argument', {
-        case_id: caseId,
+        caseId,
+        role,
         vote,
-        argument,
+        argument
       });
-      setSubmitted(true);
-      const res = await axios.get(`/api/argument/stats/${caseId}`);
-      setStats(res.data);
+      setMessage('✅ رأی و استدلال شما ثبت شد!');
     } catch (err) {
-      console.error('❌ خطا در ارسال استدلال:', err);
-      alert('⚠️ خطا در ارسال استدلال. دوباره تلاش کنید.');
+      setMessage('❌ خطا در ارسال رأی.');
     }
   };
 
-  if (loading)
-    return <div className='p-6 text-center'>⏳ در حال بارگذاری...</div>;
-  if (!caseData)
-    return <div className='p-6 text-center'>❌ پرونده‌ای یافت نشد.</div>;
-
   const chartData = {
-    labels: ['گناهکار', 'بی‌گناه'],
+    labels: ['گناهکار', 'بی‌گناه', 'ممتنع'],
     datasets: [
       {
-        data: [stats.plaintiff, stats.defender],
-        backgroundColor: ['#dc2626', '#16a34a'],
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const barData = {
-    labels: ['شاکی', 'متهم'],
-    datasets: [
-      {
-        label: 'تعداد آرا',
-        data: [stats.plaintiff, stats.defender],
-        backgroundColor: ['#f87171', '#4ade80'],
-        borderRadius: 8,
-      },
-    ],
-  };
-
-  const barOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-      },
-    },
+        data: [stats.plaintiff, stats.defendant, stats.neutral],
+        backgroundColor: ['#DC2626', '#16A34A', '#EAB308']
+      }
+    ]
   };
 
   return (
-    <div className='min-h-screen bg-[#1a1a1a] text-white p-6 flex flex-col items-center gap-6'>
-      <div className='bg-black/70 p-6 rounded-lg w-full max-w-3xl'>
-        <h2 className='text-2xl font-bold text-blue-200 mb-2'>
-          {caseData.title}
-        </h2>
-        <p className='text-md leading-relaxed mb-4'>
-          {caseData.summary.slice(0, 300)}...
-        </p>
-        <a
-          href={`https://t.me/RebLCBot?start=${caseId}`}
-          className='inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 transition px-4 py-2 rounded-full text-white font-semibold shadow-lg'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          🤖 مشاهده در ربات رسمی
-        </a>
-      </div>
+    <div className='p-4 text-white'>
+      {caseData ? (
+        <>
+          <h2 className='text-2xl font-bold mb-2'>{caseData.title}</h2>
+          <p className='text-md leading-relaxed mb-4'>
+            {caseData.summary?.slice(0, 300)}...
+          </p>
 
-      <div className='bg-white text-black p-4 rounded-md w-full max-w-2xl'>
-        <h3 className='text-center text-lg font-semibold mb-2'>
-          📊 نتایج رأی کاربران
-        </h3>
-        <Pie data={chartData} />
-      </div>
+          <a
+            href={`https://t.me/RebLCBot?start=${caseId}`}
+            target='_blank'
+            rel='noopener noreferrer'
+            className='text-sm text-blue-400 underline mb-6 inline-block'
+          >
+            👁 مشاهدهٔ کامل پرونده در ربات رسمی
+          </a>
 
-      <div className='bg-white text-black p-4 rounded-md w-full max-w-2xl'>
-        <h3 className='text-center text-lg font-semibold mb-2'>
-          📈 نمودار مقایسه‌ای آرا
-        </h3>
-        <Bar data={barData} options={barOptions} />
-      </div>
-
-      {!submitted && (
-        <div className='bg-black/60 p-6 rounded-lg w-full max-w-3xl'>
-          <h3 className='text-pink-300 text-lg mb-4 font-bold'>
-            🧠 رأی شما و استدلال
-          </h3>
-          <div className='flex gap-4 mb-4'>
+          <h3 className='text-lg font-semibold mb-2'>🎯 رأی شما چیست؟</h3>
+          <div className='flex gap-3 mb-4'>
             <button
-              className={`px-4 py-2 rounded ${
-                vote === 'plaintiff' ? 'bg-red-700' : 'bg-gray-700'
-              }`}
               onClick={() => setVote('plaintiff')}
+              className={`px-4 py-2 rounded ${
+                vote === 'plaintiff' ? 'bg-red-600' : 'bg-gray-700'
+              }`}
             >
               گناهکار
             </button>
             <button
+              onClick={() => setVote('defendant')}
               className={`px-4 py-2 rounded ${
-                vote === 'defender' ? 'bg-green-700' : 'bg-gray-700'
+                vote === 'defendant' ? 'bg-green-600' : 'bg-gray-700'
               }`}
-              onClick={() => setVote('defender')}
             >
               بی‌گناه
             </button>
+            <button
+              onClick={() => setVote('neutral')}
+              className={`px-4 py-2 rounded ${
+                vote === 'neutral' ? 'bg-yellow-600' : 'bg-gray-700'
+              }`}
+            >
+              ممتنع
+            </button>
           </div>
+
           <textarea
             value={argument}
             onChange={(e) => setArgument(e.target.value)}
-            placeholder='📝 استدلال خود را بنویسید...'
-            className='w-full h-32 p-3 rounded bg-white text-black'
-          />
+            placeholder='📝 استدلال خود را وارد کنید...'
+            title='استدلال'
+            className='w-full p-3 rounded text-black mb-4'
+            rows={4}
+          ></textarea>
+
           <button
             onClick={handleSubmit}
-            className='mt-4 bg-purple-700 hover:bg-purple-800 text-white px-6 py-2 rounded'
+            className='bg-blue-600 px-6 py-2 rounded hover:bg-blue-700 transition'
           >
-            📬 ارسال
+            ثبت رأی
           </button>
-        </div>
-      )}
 
-      {submitted && (
-        <div className='text-green-400 font-bold text-lg mt-4'>
-          ✅ رأی شما ثبت شد
-        </div>
+          {message && <p className='mt-4 text-yellow-300'>{message}</p>}
+
+          <div className='bg-white text-black p-4 rounded-md w-full max-w-2xl mt-8'>
+            <h3 className='text-center text-lg font-semibold mb-2'>
+              📊 نتایج رأی کاربران
+            </h3>
+            <div className='w-60 h-60 mx-auto'>
+              <Pie data={chartData} />
+            </div>
+          </div>
+        </>
+      ) : (
+        <p className='text-yellow-300'>⏳ در حال بارگذاری اطلاعات پرونده...</p>
       )}
     </div>
   );
