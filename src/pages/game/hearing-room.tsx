@@ -44,11 +44,11 @@ export default function HearingRoom() {
   }
 
   const chartData = {
-    labels: ['شاکی', 'مدافع', 'ممتنع'],
+    labels: ['مجرم', 'برائت', 'ممتنع'],
     datasets: [
       {
         data: [votes.plaintiff, votes.defendant, votes.abstain],
-        backgroundColor: ['#f87171', '#60a5fa', '#d1d5db'],
+        backgroundColor: ['#f87171', '#60a5fa', '#22c55e'],
       },
     ],
   }
