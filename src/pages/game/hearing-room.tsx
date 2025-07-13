@@ -69,9 +69,9 @@ export default function HearingRoom() {
           <div className="mt-6 space-y-4">
             <h4 className="text-lg font-bold">✊ رأی شما چیست؟</h4>
             <div className="flex gap-2">
-              <Button onClick={() => handleVote('plaintiff')}>🏛 شاکی</Button>
-              <Button onClick={() => handleVote('defendant')}>🛡 مدافع</Button>
-              <Button onClick={() => handleVote('abstain')}>⚖ ممتنع</Button>
+               <Button onClick={() => handleVote('defendant')}>🟢 برائت</Button>
+               <Button onClick={() => handleVote('plaintiff')}>🔴 مجرم</Button>
+               <Button onClick={() => handleVote('abstain')}>⚖ ممتنع</Button>
             </div>
           </div>
 

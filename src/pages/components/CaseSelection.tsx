@@ -1,64 +1,55 @@
-import { motion } from 'framer-motion';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { FaBalanceScale } from 'react-icons/fa';
+"use client";
 
-type Case = {
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+
+interface Case {
   id: number;
   title: string;
   summary: string;
-};
+}
 
 export default function CaseSelection() {
   const [cases, setCases] = useState<Case[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const searchParams = useSearchParams();
+  const role = searchParams.get("role");
   const router = useRouter();
 
   useEffect(() => {
-    const fetchCases = async () => {
-      try {
-        const res = await fetch('/api/cases');
-        const data = await res.json();
-        setCases(data);
-      } catch (err) {
-        console.error('❌ خطا در دریافت لیست پرونده‌ها:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCases();
+    fetch("/api/cases")
+      .then((res) => res.json())
+      .then((data) => setCases(data))
+      .catch(() => setError("❌ خطا در دریافت پرونده‌ها"));
   }, []);
 
-  return (
-    <div className='min-h-screen bg-gray-100 py-12 px-4'>
-      <div className='max-w-3xl mx-auto'>
-        <h1 className='text-2xl font-bold text-center text-gray-800 mb-8'>
-          🎯 انتخاب یک پرونده برای ورود به جلسه مناظره
-        </h1>
+  const handleSelectCase = (caseId: number) => {
+    router.push(`/game/hearing-room?case=${caseId}&role=${role}`);
+  };
 
-        {loading ? (
-          <p className='text-center'>⏳ در حال بارگذاری پرونده‌ها...</p>
-        ) : (
-          <div className='grid gap-6'>
-            {cases.map((item) => (
-              <motion.div
-                key={item.id}
-                whileHover={{ scale: 1.02 }}
-                className='bg-white rounded-xl shadow-md p-6 cursor-pointer hover:shadow-lg transition-all'
-                onClick={() => router.push(`/game/hearing-room?caseId=${item.id}`)}
-              >
-                <div className='flex items-center gap-3 mb-4'>
-                  <FaBalanceScale className='text-blue-600 text-xl' />
-                  <h2 className='text-lg font-semibold text-gray-800 truncate'>
-                    {item.title}
-                  </h2>
-                </div>
-                <p className='text-gray-700 text-sm'>{item.summary}</p>
-              </motion.div>
-            ))}
-          </div>
-        )}
+  return (
+    <div className="p-4 space-y-4">
+      <h1 className="text-xl font-bold">انتخاب پرونده</h1>
+      {error && <p className="text-red-500">{error}</p>}
+      <div className="grid gap-4 md:grid-cols-2">
+        {cases.map((item) => (
+          <Card key={item.id} className="cursor-pointer hover:shadow-md">
+            <CardContent className="p-4">
+              <h2 className="text-lg font-semibold mb-2">{item.title}</h2>
+              <p className="text-sm text-gray-700">
+                {item.summary.length > 120
+                  ? item.summary.slice(0, 120) + "..."
+                  : item.summary}
+              </p>
+              <Button onClick={() => handleSelectCase(item.id)} className="mt-4">
+                انتخاب پرونده
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );

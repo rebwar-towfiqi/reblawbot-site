@@ -1,46 +1,79 @@
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-export default function FinalVerdict() {
-  const location = useLocation();
-  const navigate = useNavigate();
+import axios from "axios";
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Tooltip,
+} from "chart.js";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
+import { Bar, Pie } from "react-chartjs-2";
 
-  const { vote, argument, reward } = location.state || {};
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement
+);
+
+export default function FinalVerdict() {
+  const t = useTranslations();
+  const [votes, setVotes] = useState<number[]>([0, 0, 0]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const searchParams = useSearchParams();
+  const caseId = searchParams?.get("case");
+
+  useEffect(() => {
+    if (!caseId) return;
+    axios
+      .get(`/api/verdict/${caseId}`)
+      .then((res) => {
+        const { plaintiff, defendant, neutral } = res.data;
+        setVotes([plaintiff, defendant, neutral]);
+      })
+      .catch(() => setError("❌ خطا در بارگذاری نتیجهٔ رأی‌گیری"))
+      .finally(() => setLoading(false));
+  }, [caseId]);
+
+  if (loading) return <p>⏳ در حال بارگذاری نتیجه...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+
+  const pieData = {
+    labels: ["شاکی", "مدعی‌علیه", "ممتنع"],
+    datasets: [
+      {
+        data: votes,
+        backgroundColor: ["#10B981", "#EF4444", "#D1D5DB"],
+      },
+    ],
+  };
+
+  const barData = {
+    labels: ["شاکی", "مدعی‌علیه", "ممتنع"],
+    datasets: [
+      {
+        label: "تعداد آرا",
+        data: votes,
+        backgroundColor: ["#10B981", "#EF4444", "#D1D5DB"],
+      },
+    ],
+  };
 
   return (
-    <div className='min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 to-white text-gray-800 px-4'>
-      <div className='bg-white shadow-xl rounded-2xl p-8 w-full max-w-2xl'>
-        <h1 className='text-3xl font-bold text-center text-green-600 mb-4'>
-          رأی نهایی شما ثبت شد 🎉
-        </h1>
-
-        <div className='mt-6 space-y-4 text-right'>
-          <div>
-            <span className='font-semibold'>رأی شما:</span>{' '}
-            <span className='text-lg text-purple-700'>
-              {vote === 'guilty' ? 'گناهکار' : 'بی‌گناه'}
-            </span>
-          </div>
-
-          <div>
-            <span className='font-semibold'>استدلال شما:</span>
-            <p className='mt-2 bg-gray-100 p-3 rounded-md border'>
-              {argument || 'بدون استدلال'}
-            </p>
-          </div>
-
-          <div className='text-center text-lg mt-4 text-amber-600 font-bold'>
-            🎁 شما {reward || 5} RLC دریافت کردید
-          </div>
-        </div>
-
-        <div className='mt-8 flex justify-center'>
-          <button
-            onClick={() => navigate('/')}
-            className='bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg shadow-md transition'
-          >
-            بازگشت به خانه
-          </button>
-        </div>
+    <div className="p-4 space-y-6">
+      <h1 className="text-xl font-bold">نتیجه نهایی</h1>
+      <div className="w-full md:w-1/2 mx-auto">
+        <Pie data={pieData} />
+      </div>
+      <div className="w-full md:w-3/4 mx-auto">
+        <Bar data={barData} />
       </div>
     </div>
   );
