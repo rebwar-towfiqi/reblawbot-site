@@ -1,7 +1,7 @@
 'use client'
 
 import axios from 'axios'
-import { ArcElement, BarElement,CategoryScale, Chart as ChartJS, Legend, LinearScale, Tooltip } from 'chart.js'
+import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Tooltip } from 'chart.js'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Bar, Pie } from 'react-chartjs-2'
@@ -19,28 +19,47 @@ export default function HearingRoom() {
   const [message, setMessage] = useState('')
   const [argument, setArgument] = useState('')
   const [votes, setVotes] = useState({ plaintiff: 0, defendant: 0, abstain: 0 })
+  const [selectedVote, setSelectedVote] = useState<'plaintiff' | 'defendant' | 'abstain' | null>(null)
 
+  // بارگذاری پرونده و آمار آرا
   useEffect(() => {
     if (caseId) {
       axios
         .get(`/api/case/${caseId}`)
         .then((res) => setCaseData(res.data))
         .catch(() => setMessage('❌ خطا در بارگذاری پرونده.'))
+
+      axios
+        .get(`/api/argument/stats/${caseId}`)
+        .then((res) => setVotes(res.data))
+        .catch(() => console.error('خطا در بارگذاری آمار آرا'))
     }
   }, [caseId])
 
-  const handleVote = (side: 'plaintiff' | 'defendant' | 'abstain') => {
-    setVotes((prev) => ({
-      ...prev,
-      [side]: prev[side] + 1,
-    }))
-  }
+  // ارسال رأی و استدلال
+  const handleSubmitArgument = async () => {
+    if (!selectedVote || !argument.trim()) {
+      alert('لطفاً هم رأی و هم استدلال را وارد کنید.')
+      return
+    }
 
-  const handleSubmitArgument = () => {
-    if (!argument.trim()) return
-    // در نسخه واقعی می‌توان ارسال به API اضافه کرد
-    alert(`✅ استدلال شما ثبت شد:\n\n${argument}`)
-    setArgument('')
+    try {
+      await axios.post('/api/argument', {
+        case_id: caseId,
+        vote: selectedVote,
+        argument,
+      })
+
+      alert('✅ رأی و استدلال شما با موفقیت ثبت شد.')
+      setArgument('')
+      setSelectedVote(null)
+
+      const res = await axios.get(`/api/argument/stats/${caseId}`)
+      setVotes(res.data)
+    } catch (err) {
+      console.error('❌ خطا در ارسال:', err)
+      alert('⚠️ خطا در ثبت استدلال. لطفاً دوباره تلاش کنید.')
+    }
   }
 
   const chartData = {
@@ -48,7 +67,7 @@ export default function HearingRoom() {
     datasets: [
       {
         data: [votes.plaintiff, votes.defendant, votes.abstain],
-        backgroundColor: ['#f87171', '#60a5fa', '#22c55e'],
+        backgroundColor: ['#ef4444', '#22c55e', '#d1d5db'],
       },
     ],
   }
@@ -69,9 +88,15 @@ export default function HearingRoom() {
           <div className="mt-6 space-y-4">
             <h4 className="text-lg font-bold">✊ رأی شما چیست؟</h4>
             <div className="flex gap-2">
-               <Button onClick={() => handleVote('defendant')}>🟢 برائت</Button>
-               <Button onClick={() => handleVote('plaintiff')}>🔴 مجرم</Button>
-               <Button onClick={() => handleVote('abstain')}>⚖ ممتنع</Button>
+              <Button onClick={() => setSelectedVote('defendant')} variant={selectedVote === 'defendant' ? 'default' : 'outline'}>
+                🟢 برائت
+              </Button>
+              <Button onClick={() => setSelectedVote('plaintiff')} variant={selectedVote === 'plaintiff' ? 'default' : 'outline'}>
+                🔴 مجرم
+              </Button>
+              <Button onClick={() => setSelectedVote('abstain')} variant={selectedVote === 'abstain' ? 'default' : 'outline'}>
+                ⚖ ممتنع
+              </Button>
             </div>
           </div>
 
