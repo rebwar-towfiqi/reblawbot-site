@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 
 export default function RoleSelection() {
   const router = useRouter()
@@ -15,7 +15,7 @@ export default function RoleSelection() {
 
       <div className="flex flex-col sm:flex-row gap-4">
         <button
-          onClick={() => handleSelect('defender')}
+          onClick={() => handleSelect('defendant')}
           className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl shadow-md"
         >
           👨‍⚖ وکیل متهم
