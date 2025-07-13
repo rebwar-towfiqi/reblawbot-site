@@ -1,134 +1,101 @@
-'use client';
+'use client'
 
-import axios from 'axios';
-import { ArcElement, Chart as ChartJS, Legend,Tooltip } from 'chart.js';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { Pie } from 'react-chartjs-2';
+import axios from 'axios'
+import { ArcElement, BarElement,CategoryScale, Chart as ChartJS, Legend, LinearScale, Tooltip } from 'chart.js'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
+import { Bar, Pie } from 'react-chartjs-2'
 
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 
-ChartJS.register(ArcElement, Tooltip, Legend);
-
-type CaseData = {
-  id: number;
-  title: string;
-  summary: string;
-};
-
-type Stats = {
-  plaintiff: number;
-  defendant: number;
-  neutral: number;
-};
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement)
 
 export default function HearingRoom() {
-  const router = useRouter();
-  const caseId = router.query.case || router.query.caseId;
-  const role = router.query.role as string;
+  const router = useRouter()
+  const { case: caseId, role } = router.query
 
-  const [caseData, setCaseData] = useState<CaseData | null>(null);
-  const [message, setMessage] = useState('');
-  const [argument, setArgument] = useState('');
-  const [stats, setStats] = useState<Stats>({ plaintiff: 0, defendant: 0, neutral: 0 });
-  const [submitted, setSubmitted] = useState(false);
+  const [caseData, setCaseData] = useState<any>({})
+  const [message, setMessage] = useState('')
+  const [argument, setArgument] = useState('')
+  const [votes, setVotes] = useState({ plaintiff: 0, defendant: 0, abstain: 0 })
 
   useEffect(() => {
     if (caseId) {
       axios
         .get(`/api/case/${caseId}`)
         .then((res) => setCaseData(res.data))
-        .catch(() => setMessage('❌ خطا در بارگذاری پرونده.'));
+        .catch(() => setMessage('❌ خطا در بارگذاری پرونده.'))
     }
-  }, [caseId]);
+  }, [caseId])
 
-  useEffect(() => {
-    if (caseId) {
-      axios
-        .get(`/api/argument/stats?case=${caseId}`)
-        .then((res) => setStats(res.data))
-        .catch(() => console.warn('خطا در دریافت آمار'));
-    }
-  }, [submitted]);
+  const handleVote = (side: 'plaintiff' | 'defendant' | 'abstain') => {
+    setVotes((prev) => ({
+      ...prev,
+      [side]: prev[side] + 1,
+    }))
+  }
 
-  const handleSubmit = () => {
-    if (!argument.trim()) {
-      setMessage('⚠ لطفاً استدلال خود را بنویسید.');
-      return;
-    }
+  const handleSubmitArgument = () => {
+    if (!argument.trim()) return
+    // در نسخه واقعی می‌توان ارسال به API اضافه کرد
+    alert(`✅ استدلال شما ثبت شد:\n\n${argument}`)
+    setArgument('')
+  }
 
-    axios
-      .post('/api/argument', { caseId, role, text: argument })
-      .then(() => {
-        setSubmitted(true);
-        setMessage('✅ استدلال شما ثبت شد.');
-      })
-      .catch(() => {
-        setMessage('❌ خطا در ثبت استدلال.');
-      });
-  };
-
-  if (!caseId) return <p className="text-yellow-400 p-4">❗شناسه پرونده نامعتبر است.</p>;
+  const chartData = {
+    labels: ['شاکی', 'مدافع', 'ممتنع'],
+    datasets: [
+      {
+        data: [votes.plaintiff, votes.defendant, votes.abstain],
+        backgroundColor: ['#f87171', '#60a5fa', '#d1d5db'],
+      },
+    ],
+  }
 
   return (
-    <div className="p-4 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-2 text-center">🧑‍⚖️ جلسه رسیدگی</h1>
-      {message && <p className="text-sm text-red-400 mb-2">{message}</p>}
+    <div className="max-w-2xl mx-auto p-4">
+      <h2 className="text-2xl font-bold mb-4">🧾 پرونده انتخابی</h2>
+      {message && <p className="text-red-500">{message}</p>}
 
-      {caseData && (
+      {!message && caseData && (
         <>
-          <h2 className="text-xl font-semibold mb-1">{caseData.title}</h2>
-          <p className="text-md leading-relaxed mb-4">
-            {caseData.summary?.slice(0, 300)}...
-          </p>
-          <a
-            href={`https://t.me/RebLCBot?start=${caseData.id}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-blue-400 underline mb-6 inline-block"
-          >
-            👁 مشاهدهٔ کامل پرونده در ربات رسمی
+          <h3 className="text-xl font-semibold mb-2">{caseData.title}</h3>
+          <p className="mb-2">{caseData.summary?.slice(0, 300)}...</p>
+          <a href={`https://t.me/RebLCBot?start=${caseId}`} className="text-blue-600 underline">
+            👁 مشاهدهٔ کامل در ربات رسمی
           </a>
-        </>
-      )}
 
-      {!submitted && (
-        <>
-          <label htmlFor="argument" className="text-sm text-gray-300 mb-1 block">
-            ✍️ استدلال شما:
-          </label>
-          <Textarea
-            id="argument"
-            placeholder="نظرتان را درباره پرونده بنویسید..."
-            rows={5}
-            value={argument}
-            onChange={(e) => setArgument(e.target.value)}
-            className="mb-2"
-          />
-          <Button onClick={handleSubmit}>📨 ثبت رأی و استدلال</Button>
-        </>
-      )}
+          <div className="mt-6 space-y-4">
+            <h4 className="text-lg font-bold">✊ رأی شما چیست؟</h4>
+            <div className="flex gap-2">
+              <Button onClick={() => handleVote('plaintiff')}>🏛 شاکی</Button>
+              <Button onClick={() => handleVote('defendant')}>🛡 مدافع</Button>
+              <Button onClick={() => handleVote('abstain')}>⚖ ممتنع</Button>
+            </div>
+          </div>
 
-      {submitted && (
-        <>
-          <p className="mt-4 mb-2 text-green-400">🎉 از مشارکت شما سپاسگزاریم!</p>
-          <div className="w-full max-w-[220px] mx-auto">
-            <Pie
-              data={{
-                labels: ['شاکی', 'خوانده', 'ممتنع'],
-                datasets: [
-                  {
-                    data: [stats.plaintiff, stats.defendant, stats.neutral],
-                    backgroundColor: ['#f87171', '#60a5fa', '#d1d5db'],
-                    borderWidth: 1,
-                  },
-                ],
-              }}
+          <div className="mt-6">
+            <h4 className="text-lg font-bold mb-2">📊 نمودار آرا</h4>
+            <div className="w-48 h-48 mx-auto">
+              <Pie data={chartData} />
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <h4 className="text-lg font-bold mb-2">📝 استدلال شما:</h4>
+            <Textarea
+              placeholder="استدلال خود را وارد کنید..."
+              value={argument}
+              onChange={(e) => setArgument(e.target.value)}
+              className="min-h-[100px]"
             />
+            <Button onClick={handleSubmitArgument} className="mt-2">
+              📤 ارسال استدلال
+            </Button>
           </div>
         </>
       )}
     </div>
-  );
+  )
 }
