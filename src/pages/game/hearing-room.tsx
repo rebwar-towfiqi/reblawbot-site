@@ -11,17 +11,30 @@ import { Textarea } from '@/components/ui/textarea'
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement)
 
+// ✅ تعریف نوع اطلاعات پرونده
+type CaseData = {
+  title: string
+  summary: string
+}
+
+// ✅ تعریف نوع آرای رأی‌دهندگان
+type VoteStats = {
+  plaintiff: number
+  defendant: number
+  abstain: number
+}
+
 export default function HearingRoom() {
   const router = useRouter()
   const { case: caseId, role } = router.query
 
-  const [caseData, setCaseData] = useState<any>({})
-  const [message, setMessage] = useState('')
-  const [argument, setArgument] = useState('')
-  const [votes, setVotes] = useState({ plaintiff: 0, defendant: 0, abstain: 0 })
+  const [caseData, setCaseData] = useState<CaseData | null>(null)
+  const [message, setMessage] = useState<string>('')
+  const [argument, setArgument] = useState<string>('')
+  const [votes, setVotes] = useState<VoteStats>({ plaintiff: 0, defendant: 0, abstain: 0 })
   const [selectedVote, setSelectedVote] = useState<'plaintiff' | 'defendant' | 'abstain' | null>(null)
 
-  // بارگذاری پرونده و آمار آرا
+  // 📥 بارگذاری پرونده و آمار آرا
   useEffect(() => {
     if (caseId) {
       axios
@@ -32,11 +45,11 @@ export default function HearingRoom() {
       axios
         .get(`/api/argument/stats/${caseId}`)
         .then((res) => setVotes(res.data))
-        .catch(() => console.error('خطا در بارگذاری آمار آرا'))
+        .catch(() => console.error('❌ خطا در بارگذاری آمار آرا'))
     }
   }, [caseId])
 
-  // ارسال رأی و استدلال
+  // 📤 ارسال رأی و استدلال
   const handleSubmitArgument = async () => {
     if (!selectedVote || !argument.trim()) {
       alert('لطفاً هم رأی و هم استدلال را وارد کنید.')
@@ -80,7 +93,7 @@ export default function HearingRoom() {
       {!message && caseData && (
         <>
           <h3 className="text-xl font-semibold mb-2">{caseData.title}</h3>
-          <p className="mb-2">{caseData.summary?.slice(0, 300)}...</p>
+          <p className="mb-2">{caseData.summary.slice(0, 300)}...</p>
           <a href={`https://t.me/RebLCBot?start=${caseId}`} className="text-blue-600 underline">
             👁 مشاهدهٔ کامل در ربات رسمی
           </a>
