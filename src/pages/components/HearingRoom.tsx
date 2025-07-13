@@ -5,7 +5,8 @@ import {
   ArcElement,
   Chart as ChartJS,
   Legend,
-  Tooltip} from 'chart.js';
+  Tooltip
+} from 'chart.js';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
@@ -38,6 +39,7 @@ export default function HearingRoom() {
     neutral: 0
   });
 
+  // بارگذاری اطلاعات پرونده
   useEffect(() => {
     if (caseId) {
       axios
@@ -47,6 +49,7 @@ export default function HearingRoom() {
     }
   }, [caseId]);
 
+  // دریافت آمار آرا
   useEffect(() => {
     if (caseId) {
       axios
@@ -56,6 +59,7 @@ export default function HearingRoom() {
     }
   }, [caseId]);
 
+  // ثبت رأی
   const handleSubmit = async () => {
     if (!vote || !argument.trim()) {
       setMessage('لطفاً رأی و استدلال خود را وارد کنید.');
@@ -75,6 +79,7 @@ export default function HearingRoom() {
     }
   };
 
+  // داده‌های نمودار
   const chartData = {
     labels: ['گناهکار', 'بی‌گناه', 'ممتنع'],
     datasets: [
@@ -149,7 +154,7 @@ export default function HearingRoom() {
 
           {message && <p className='mt-4 text-yellow-300'>{message}</p>}
 
-          <div className='bg-white text-black p-4 rounded-md w-full max-w-2xl mt-8'>
+          <div className='bg-white text-black p-4 rounded-md w-full max-w-md mt-8 mx-auto'>
             <h3 className='text-center text-lg font-semibold mb-2'>
               📊 نتایج رأی کاربران
             </h3>
