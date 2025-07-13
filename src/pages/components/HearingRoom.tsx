@@ -1,15 +1,13 @@
 'use client';
 
 import axios from 'axios';
-import {
-  ArcElement,
-  Chart as ChartJS,
-  Legend,
-  Tooltip
-} from 'chart.js';
+import { ArcElement, Chart as ChartJS, Legend,Tooltip } from 'chart.js';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
+
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -27,19 +25,15 @@ type Stats = {
 
 export default function HearingRoom() {
   const router = useRouter();
-  const { caseId, role } = router.query;
+  const caseId = router.query.case || router.query.caseId;
+  const role = router.query.role as string;
 
   const [caseData, setCaseData] = useState<CaseData | null>(null);
-  const [vote, setVote] = useState<string>('');
-  const [argument, setArgument] = useState<string>('');
-  const [message, setMessage] = useState<string>('');
-  const [stats, setStats] = useState<Stats>({
-    plaintiff: 0,
-    defendant: 0,
-    neutral: 0
-  });
+  const [message, setMessage] = useState('');
+  const [argument, setArgument] = useState('');
+  const [stats, setStats] = useState<Stats>({ plaintiff: 0, defendant: 0, neutral: 0 });
+  const [submitted, setSubmitted] = useState(false);
 
-  // بارگذاری اطلاعات پرونده
   useEffect(() => {
     if (caseId) {
       axios
@@ -49,122 +43,91 @@ export default function HearingRoom() {
     }
   }, [caseId]);
 
-  // دریافت آمار آرا
   useEffect(() => {
     if (caseId) {
       axios
-        .get(`/api/argument?caseId=${caseId}`)
+        .get(`/api/argument/stats?case=${caseId}`)
         .then((res) => setStats(res.data))
-        .catch(() => setMessage('❌ خطا در دریافت آمار.'));
+        .catch(() => console.warn('خطا در دریافت آمار'));
     }
-  }, [caseId]);
+  }, [submitted]);
 
-  // ثبت رأی
-  const handleSubmit = async () => {
-    if (!vote || !argument.trim()) {
-      setMessage('لطفاً رأی و استدلال خود را وارد کنید.');
+  const handleSubmit = () => {
+    if (!argument.trim()) {
+      setMessage('⚠ لطفاً استدلال خود را بنویسید.');
       return;
     }
 
-    try {
-      await axios.post('/api/argument', {
-        caseId,
-        role,
-        vote,
-        argument
+    axios
+      .post('/api/argument', { caseId, role, text: argument })
+      .then(() => {
+        setSubmitted(true);
+        setMessage('✅ استدلال شما ثبت شد.');
+      })
+      .catch(() => {
+        setMessage('❌ خطا در ثبت استدلال.');
       });
-      setMessage('✅ رأی و استدلال شما ثبت شد!');
-    } catch (err) {
-      setMessage('❌ خطا در ارسال رأی.');
-    }
   };
 
-  // داده‌های نمودار
-  const chartData = {
-    labels: ['گناهکار', 'بی‌گناه', 'ممتنع'],
-    datasets: [
-      {
-        data: [stats.plaintiff, stats.defendant, stats.neutral],
-        backgroundColor: ['#DC2626', '#16A34A', '#EAB308']
-      }
-    ]
-  };
+  if (!caseId) return <p className="text-yellow-400 p-4">❗شناسه پرونده نامعتبر است.</p>;
 
   return (
-    <div className='p-4 text-white'>
-      {caseData ? (
+    <div className="p-4 max-w-xl mx-auto">
+      <h1 className="text-2xl font-bold mb-2 text-center">🧑‍⚖️ جلسه رسیدگی</h1>
+      {message && <p className="text-sm text-red-400 mb-2">{message}</p>}
+
+      {caseData && (
         <>
-          <h2 className='text-2xl font-bold mb-2'>{caseData.title}</h2>
-          <p className='text-md leading-relaxed mb-4'>
+          <h2 className="text-xl font-semibold mb-1">{caseData.title}</h2>
+          <p className="text-md leading-relaxed mb-4">
             {caseData.summary?.slice(0, 300)}...
           </p>
-
           <a
-            href={`https://t.me/RebLCBot?start=${caseId}`}
-            target='_blank'
-            rel='noopener noreferrer'
-            className='text-sm text-blue-400 underline mb-6 inline-block'
+            href={`https://t.me/RebLCBot?start=${caseData.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-blue-400 underline mb-6 inline-block"
           >
             👁 مشاهدهٔ کامل پرونده در ربات رسمی
           </a>
+        </>
+      )}
 
-          <h3 className='text-lg font-semibold mb-2'>🎯 رأی شما چیست؟</h3>
-          <div className='flex gap-3 mb-4'>
-            <button
-              onClick={() => setVote('plaintiff')}
-              className={`px-4 py-2 rounded ${
-                vote === 'plaintiff' ? 'bg-red-600' : 'bg-gray-700'
-              }`}
-            >
-              گناهکار
-            </button>
-            <button
-              onClick={() => setVote('defendant')}
-              className={`px-4 py-2 rounded ${
-                vote === 'defendant' ? 'bg-green-600' : 'bg-gray-700'
-              }`}
-            >
-              بی‌گناه
-            </button>
-            <button
-              onClick={() => setVote('neutral')}
-              className={`px-4 py-2 rounded ${
-                vote === 'neutral' ? 'bg-yellow-600' : 'bg-gray-700'
-              }`}
-            >
-              ممتنع
-            </button>
-          </div>
-
-          <textarea
+      {!submitted && (
+        <>
+          <label htmlFor="argument" className="text-sm text-gray-300 mb-1 block">
+            ✍️ استدلال شما:
+          </label>
+          <Textarea
+            id="argument"
+            placeholder="نظرتان را درباره پرونده بنویسید..."
+            rows={5}
             value={argument}
             onChange={(e) => setArgument(e.target.value)}
-            placeholder='📝 استدلال خود را وارد کنید...'
-            title='استدلال'
-            className='w-full p-3 rounded text-black mb-4'
-            rows={4}
-          ></textarea>
+            className="mb-2"
+          />
+          <Button onClick={handleSubmit}>📨 ثبت رأی و استدلال</Button>
+        </>
+      )}
 
-          <button
-            onClick={handleSubmit}
-            className='bg-blue-600 px-6 py-2 rounded hover:bg-blue-700 transition'
-          >
-            ثبت رأی
-          </button>
-
-          {message && <p className='mt-4 text-yellow-300'>{message}</p>}
-
-          <div className='bg-white text-black p-4 rounded-md w-full max-w-md mt-8 mx-auto'>
-            <h3 className='text-center text-lg font-semibold mb-2'>
-              📊 نتایج رأی کاربران
-            </h3>
-            <div className='w-60 h-60 mx-auto'>
-              <Pie data={chartData} />
-            </div>
+      {submitted && (
+        <>
+          <p className="mt-4 mb-2 text-green-400">🎉 از مشارکت شما سپاسگزاریم!</p>
+          <div className="w-full max-w-[220px] mx-auto">
+            <Pie
+              data={{
+                labels: ['شاکی', 'خوانده', 'ممتنع'],
+                datasets: [
+                  {
+                    data: [stats.plaintiff, stats.defendant, stats.neutral],
+                    backgroundColor: ['#f87171', '#60a5fa', '#d1d5db'],
+                    borderWidth: 1,
+                  },
+                ],
+              }}
+            />
           </div>
         </>
-      ) : (
-        <p className='text-yellow-300'>⏳ در حال بارگذاری اطلاعات پرونده...</p>
       )}
     </div>
   );
