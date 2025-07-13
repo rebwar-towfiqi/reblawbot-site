@@ -1,125 +1,169 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import axios from 'axios';
+import {
+  ArcElement,
+  Chart as ChartJS,
+  Legend,
+  Tooltip} from 'chart.js';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { Pie } from 'react-chartjs-2';
 
-const HearingRoomPage = () => {
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+type CaseData = {
+  id: number;
+  title: string;
+  summary: string;
+};
+
+type Stats = {
+  plaintiff: number;
+  defendant: number;
+  neutral: number;
+};
+
+export default function HearingRoom() {
   const router = useRouter();
-  const [caseText, setCaseText] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [selectedVote, setSelectedVote] = useState('');
-  const [message, setMessage] = useState('');
+  const { caseId, role } = router.query;
 
-  const userRole =
-    typeof window !== 'undefined' ? localStorage.getItem('userRole') : null;
-  const caseId =
-    typeof window !== 'undefined'
-      ? localStorage.getItem('selectedCaseId')
-      : null;
+  const [caseData, setCaseData] = useState<CaseData | null>(null);
+  const [vote, setVote] = useState<string>('');
+  const [argument, setArgument] = useState<string>('');
+  const [message, setMessage] = useState<string>('');
+  const [stats, setStats] = useState<Stats>({
+    plaintiff: 0,
+    defendant: 0,
+    neutral: 0
+  });
 
+  // Fetch case data
   useEffect(() => {
-    if (!userRole || !caseId) {
-      router.push('/'); // اگر اطلاعات ناقص بود، بازگشت به خانه
+    if (caseId) {
+      axios
+        .get(`/api/case/${caseId}`)
+        .then((res) => setCaseData(res.data))
+        .catch(() => setMessage('❌ خطا در بارگذاری پرونده.'));
+    }
+  }, [caseId]);
+
+  // Fetch vote stats
+  useEffect(() => {
+    if (caseId) {
+      axios
+        .get(`/api/argument?caseId=${caseId}`)
+        .then((res) => setStats(res.data))
+        .catch(() => setMessage('❌ خطا در دریافت آمار.'));
+    }
+  }, [caseId]);
+
+  // Submit vote and argument
+  const handleSubmit = async () => {
+    if (!vote || !argument.trim()) {
+      setMessage('لطفاً رأی و استدلال خود را وارد کنید.');
       return;
     }
 
-    const fetchCaseText = async () => {
-      try {
-        const res = await fetch(`/api/case/${caseId}`);
-        if (!res.ok) throw new Error('Failed to fetch');
-        const data = await res.json();
-        setCaseText(data.full_text || 'متن پرونده یافت نشد.');
-      } catch (err) {
-        setCaseText('❌ خطا در بارگذاری پرونده.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCaseText();
-  }, [userRole, caseId, router]);
-
-  const handleVote = async () => {
-    if (!selectedVote || !caseId) return;
-
     try {
-      const res = await fetch('/api/vote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          case_id: caseId,
-          vote: selectedVote,
-          role: userRole,
-        }),
+      const res = await axios.post('/api/argument', {
+        caseId,
+        role,
+        vote,
+        argument
       });
-
-      if (res.ok) {
-        setMessage('✅ رأی شما با موفقیت ثبت شد.');
-      } else {
-        setMessage('❌ خطا در ثبت رأی.');
-      }
+      setMessage('✅ رأی و استدلال شما ثبت شد!');
     } catch (err) {
-      setMessage('❌ خطا در ارتباط با سرور.');
+      setMessage('❌ خطا در ارسال رأی.');
     }
   };
 
-  return (
-    <div className='p-6 max-w-3xl mx-auto'>
-      <h1 className='text-xl font-bold mb-4'>🧾 جلسه رسیدگی</h1>
+  const chartData = {
+    labels: ['گناهکار', 'بی‌گناه', 'ممتنع'],
+    datasets: [
+      {
+        data: [stats.plaintiff, stats.defendant, stats.neutral],
+        backgroundColor: ['#DC2626', '#16A34A', '#EAB308']
+      }
+    ]
+  };
 
-      {!caseId && !loading ? (
-        <p>لطفاً ابتدا یک پرونده انتخاب کنید.</p>
-      ) : loading ? (
-        <p>در حال بارگذاری پرونده...</p>
-      ) : (
+  return (
+    <div className='p-4 text-white'>
+      {caseData ? (
         <>
-          <p className='whitespace-pre-wrap bg-gray-100 p-4 rounded text-justify mb-4'>
-            {caseText}
+          <h2 className='text-2xl font-bold mb-2'>{caseData.title}</h2>
+          <p className='text-md leading-relaxed mb-4'>
+            {caseData.summary.slice(0, 300)}...
           </p>
 
-          <div className='space-y-4'>
-            <div>
-              <label className='block font-medium'>✋ انتخاب رأی:</label>
-              <div className='flex gap-4 mt-2'>
-                <button
-                  onClick={() => setSelectedVote('guilty')}
-                  className={`px-4 py-2 rounded ${
-                    selectedVote === 'guilty'
-                      ? 'bg-red-600 text-white'
-                      : 'bg-white border border-gray-400'
-                  }`}
-                >
-                  مجرم است
-                </button>
-                <button
-                  onClick={() => setSelectedVote('innocent')}
-                  className={`px-4 py-2 rounded ${
-                    selectedVote === 'innocent'
-                      ? 'bg-green-600 text-white'
-                      : 'bg-white border border-gray-400'
-                  }`}
-                >
-                  بی‌گناه است
-                </button>
-              </div>
-            </div>
+          <a
+            href={`https://t.me/RebLCBot?start=${caseId}`}
+            target='_blank'
+            rel='noopener noreferrer'
+            className='text-sm text-blue-400 underline mb-6 inline-block'
+          >
+            👁 مشاهدهٔ کامل در ربات رسمی
+          </a>
 
+          <h3 className='text-lg font-semibold mb-2'>🎯 رأی شما چیست؟</h3>
+          <div className='flex gap-3 mb-4'>
             <button
-              onClick={handleVote}
-              disabled={!selectedVote}
-              className='px-6 py-2 bg-blue-700 text-white rounded disabled:opacity-50'
+              onClick={() => setVote('plaintiff')}
+              className={`px-4 py-2 rounded ${
+                vote === 'plaintiff' ? 'bg-red-600' : 'bg-gray-700'
+              }`}
             >
-              ثبت رأی
+              گناهکار
             </button>
+            <button
+              onClick={() => setVote('defendant')}
+              className={`px-4 py-2 rounded ${
+                vote === 'defendant' ? 'bg-green-600' : 'bg-gray-700'
+              }`}
+            >
+              بی‌گناه
+            </button>
+            <button
+              onClick={() => setVote('neutral')}
+              className={`px-4 py-2 rounded ${
+                vote === 'neutral' ? 'bg-yellow-600' : 'bg-gray-700'
+              }`}
+            >
+              ممتنع
+            </button>
+          </div>
 
-            {message && (
-              <div className='mt-3 text-sm text-gray-700'>{message}</div>
-            )}
+          <textarea
+            value={argument}
+            onChange={(e) => setArgument(e.target.value)}
+            placeholder='📝 استدلال خود را وارد کنید...'
+            title='استدلال'
+            className='w-full p-3 rounded text-black mb-4'
+            rows={4}
+          ></textarea>
+
+          <button
+            onClick={handleSubmit}
+            className='bg-blue-600 px-6 py-2 rounded hover:bg-blue-700 transition'
+          >
+            ثبت رأی
+          </button>
+
+          {message && <p className='mt-4 text-yellow-300'>{message}</p>}
+
+          <div className='bg-white text-black p-4 rounded-md w-full max-w-2xl mt-8'>
+            <h3 className='text-center text-lg font-semibold mb-2'>
+              📊 نتایج رأی کاربران
+            </h3>
+            <div className='w-64 h-64 mx-auto'>
+              <Pie data={chartData} />
+            </div>
           </div>
         </>
+      ) : (
+        <p className='text-yellow-300'>⏳ در حال بارگذاری اطلاعات پرونده...</p>
       )}
     </div>
   );
-};
-
-export default HearingRoomPage;
+}
