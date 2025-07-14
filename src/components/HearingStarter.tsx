@@ -30,11 +30,16 @@ type CaseData = {
   summary: string;
 };
 
+type StatsData = {
+  plaintiff: number;
+  defender: number;
+};
+
 export default function HearingRoomPage() {
   const params = useSearchParams();
   const caseId = params?.get('caseId');
   const [caseData, setCaseData] = useState<CaseData | null>(null);
-  const [stats, setStats] = useState({ plaintiff: 0, defender: 0 });
+  const [stats, setStats] = useState<StatsData>({ plaintiff: 0, defender: 0 });
   const [vote, setVote] = useState('');
   const [argument, setArgument] = useState('');
   const [loading, setLoading] = useState(true);
@@ -49,10 +54,10 @@ export default function HearingRoomPage() {
           axios.get(`/api/case/${caseId}`),
           axios.get(`/api/argument/stats/${caseId}`),
         ]);
-        setCaseData(caseRes.data);
-        setStats(statRes.data);
+        setCaseData(caseRes.data as CaseData);
+        setStats(statRes.data as StatsData);
       } catch {
-        // خطا لاگ نمی‌شود برای رعایت eslint
+        // Ignored for ESLint
       } finally {
         setLoading(false);
       }
@@ -74,7 +79,7 @@ export default function HearingRoomPage() {
       });
       setSubmitted(true);
       const res = await axios.get(`/api/argument/stats/${caseId}`);
-      setStats(res.data);
+      setStats(res.data as StatsData);
     } catch {
       alert('❌ خطا در ارسال اطلاعات.');
     }
