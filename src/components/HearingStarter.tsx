@@ -103,7 +103,9 @@ export default function HearingRoomPage() {
       </div>
 
       <div className='bg-white p-4 rounded-xl w-full max-w-2xl shadow'>
-        <h3 className='text-center font-bold mb-2'>📊 نمودار دایره‌ای رأی کاربران</h3>
+        <h3 className='text-center font-bold mb-2'>
+          📊 نمودار دایره‌ای رأی کاربران
+        </h3>
         <Pie
           data={{
             labels: ['گناهکار', 'بی‌گناه'],
@@ -141,7 +143,9 @@ export default function HearingRoomPage() {
 
       {!submitted && (
         <div className='bg-white p-6 rounded-xl w-full max-w-3xl shadow space-y-4'>
-          <h3 className='text-xl font-bold text-gray-800'>🧠 ثبت رأی و استدلال</h3>
+          <h3 className='text-xl font-bold text-gray-800'>
+            🧠 ثبت رأی و استدلال
+          </h3>
           <div className='flex gap-4'>
             <button
               onClick={() => setVote('plaintiff')}
