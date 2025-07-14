@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // src/components/HearingRoom.tsx
 import axios from 'axios';
 import {
