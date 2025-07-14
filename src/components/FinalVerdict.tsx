@@ -1,10 +1,24 @@
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-export default function FinalVerdict() {
-  const location = useLocation();
-  const navigate = useNavigate();
+// src/components/FinalVerdict.tsx
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
-  const { vote, argument, reward } = location.state || {};
+export default function FinalVerdict() {
+  const router = useRouter();
+  const { vote, argument, reward } = router.query;
+
+  const [verdict, setVerdict] = useState<string | null>(null);
+  const [justification, setJustification] = useState<string | null>(null);
+  const [points, setPoints] = useState<string | number>(5);
+
+  useEffect(() => {
+    if (vote && typeof vote === 'string') setVerdict(vote);
+    if (argument && typeof argument === 'string') setJustification(argument);
+    if (reward && typeof reward === 'string') setPoints(reward);
+  }, [vote, argument, reward]);
+
+  const handleBack = () => {
+    router.push('/');
+  };
 
   return (
     <div className='min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 to-white text-gray-800 px-4'>
@@ -17,25 +31,25 @@ export default function FinalVerdict() {
           <div>
             <span className='font-semibold'>رأی شما:</span>{' '}
             <span className='text-lg text-purple-700'>
-              {vote === 'guilty' ? 'گناهکار' : 'بی‌گناه'}
+              {verdict === 'guilty' ? 'مجرم' : verdict === 'innocent' ? 'برائت' : 'ممتنع'}
             </span>
           </div>
 
           <div>
             <span className='font-semibold'>استدلال شما:</span>
             <p className='mt-2 bg-gray-100 p-3 rounded-md border'>
-              {argument || 'بدون استدلال'}
+              {justification || 'بدون استدلال'}
             </p>
           </div>
 
           <div className='text-center text-lg mt-4 text-amber-600 font-bold'>
-            🎁 شما {reward || 5} RLC دریافت کردید
+            🎁 شما {points || 5} RLC دریافت کردید
           </div>
         </div>
 
         <div className='mt-8 flex justify-center'>
           <button
-            onClick={() => navigate('/')}
+            onClick={handleBack}
             className='bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg shadow-md transition'
           >
             بازگشت به خانه
