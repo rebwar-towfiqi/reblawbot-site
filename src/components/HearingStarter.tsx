@@ -1,4 +1,5 @@
 // src/components/HearingStarter.tsx
+
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
