@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 'use client';
 
 import axios from 'axios';
@@ -25,7 +26,7 @@ export default function CaseSelectionPage() {
         setCases(res.data);
         setLoading(false);
       })
-      .catch((err: any) => {
+      .catch((err: unknown) => {
         console.error('❌ خطا در دریافت پرونده‌ها:', err);
         setLoading(false);
       });
