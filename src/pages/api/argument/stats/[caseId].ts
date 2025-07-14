@@ -1,11 +1,9 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+// src/pages/api/argument/stats/[caseId].ts
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { caseId } = req.query;
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const { caseId: _caseId } = req.query; // فعلاً استفاده نمی‌شود ولی آماده است
 
-  // به‌صورت موقتی آمار تصادفی برمی‌گردانیم
-  res.status(200).json({
-    plaintiff: Math.floor(Math.random() * 10),
-    defender: Math.floor(Math.random() * 10),
-  });
+  return res.status(200).json({ message: 'Handler آماده است اما داده‌ای استفاده نشده.' });
 }
+
