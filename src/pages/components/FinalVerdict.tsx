@@ -1,3 +1,4 @@
+// FinalVerdict.tsx
 import axios from 'axios';
 import {
   ArcElement,
@@ -9,7 +10,6 @@ import {
   Tooltip,
 } from 'chart.js';
 import { useSearchParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
 
@@ -23,7 +23,6 @@ ChartJS.register(
 );
 
 export default function FinalVerdict() {
-  const t = useTranslations();
   const [votes, setVotes] = useState<number[]>([0, 0, 0]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -46,7 +45,7 @@ export default function FinalVerdict() {
   if (error) return <p className='text-red-500'>{error}</p>;
 
   const pieData = {
-    labels: ['شاکی', 'مدعی‌علیه', 'ممتنع'],
+    labels: ['برائت', 'مجرم', 'ممتنع'],
     datasets: [
       {
         data: votes,
@@ -56,7 +55,7 @@ export default function FinalVerdict() {
   };
 
   const barData = {
-    labels: ['شاکی', 'مدعی‌علیه', 'ممتنع'],
+    labels: ['برائت', 'مجرم', 'ممتنع'],
     datasets: [
       {
         label: 'تعداد آرا',
