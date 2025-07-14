@@ -21,7 +21,11 @@ export default function FinalVerdict() {
           <div>
             <span className='font-semibold'>رأی شما:</span>{' '}
             <span className='text-lg text-purple-700'>
-              {vote === 'guilty' ? 'گناهکار' : vote === 'innocent' ? 'بی‌گناه' : 'ممتنع'}
+              {vote === 'guilty'
+                ? 'گناهکار'
+                : vote === 'innocent'
+                  ? 'بی‌گناه'
+                  : 'ممتنع'}
             </span>
           </div>
 
