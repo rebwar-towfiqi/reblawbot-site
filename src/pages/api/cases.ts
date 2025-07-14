@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // src/pages/api/cases.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import path from 'path';
