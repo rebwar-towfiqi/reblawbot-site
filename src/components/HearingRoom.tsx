@@ -125,7 +125,9 @@ export default function HearingRoom() {
   return (
     <div className='min-h-screen bg-[#1a1a1a] text-white p-6 flex flex-col items-center gap-6'>
       <div className='bg-black/70 p-6 rounded-lg w-full max-w-3xl'>
-        <h2 className='text-2xl font-bold text-blue-200 mb-2'>{caseData.title}</h2>
+        <h2 className='text-2xl font-bold text-blue-200 mb-2'>
+          {caseData.title}
+        </h2>
         <p className='text-md leading-relaxed mb-4'>
           {caseData.summary.slice(0, 300)}...
         </p>
@@ -140,18 +142,24 @@ export default function HearingRoom() {
       </div>
 
       <div className='bg-white text-black p-4 rounded-md w-full max-w-2xl'>
-        <h3 className='text-center text-lg font-semibold mb-2'>📊 نمودار دایره‌ای</h3>
+        <h3 className='text-center text-lg font-semibold mb-2'>
+          📊 نمودار دایره‌ای
+        </h3>
         <Pie data={pieData} />
       </div>
 
       <div className='bg-white text-black p-4 rounded-md w-full max-w-2xl'>
-        <h3 className='text-center text-lg font-semibold mb-2'>📈 نمودار میله‌ای</h3>
+        <h3 className='text-center text-lg font-semibold mb-2'>
+          📈 نمودار میله‌ای
+        </h3>
         <Bar data={barData} options={barOptions} />
       </div>
 
       {!submitted && (
         <div className='bg-black/60 p-6 rounded-lg w-full max-w-3xl'>
-          <h3 className='text-pink-300 text-lg mb-4 font-bold'>🧠 رأی شما و استدلال</h3>
+          <h3 className='text-pink-300 text-lg mb-4 font-bold'>
+            🧠 رأی شما و استدلال
+          </h3>
           <div className='flex gap-4 mb-4'>
             <button
               className={`px-4 py-2 rounded ${vote === 'guilty' ? 'bg-red-700' : 'bg-gray-700'}`}
