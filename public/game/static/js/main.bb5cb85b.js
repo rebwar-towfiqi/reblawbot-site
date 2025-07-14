@@ -11082,7 +11082,7 @@
         t,
         "' is not an animatable color. Use the equivalent color code instead.",
       ),
-      !Boolean(e))
+      !e)
     )
       return !1;
     let i = e.parse(t);
@@ -14782,7 +14782,7 @@
                   Fr(s.x, a.x, l.x),
                   Fr(s.y, a.y, l.y))
                 : this.targetDelta
-                  ? (Boolean(this.resumingFrom)
+                  ? (this.resumingFrom
                       ? (this.target = this.applyTransform(
                           this.layout.layoutBox,
                         ))

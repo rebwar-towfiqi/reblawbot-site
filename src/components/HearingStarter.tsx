@@ -1,6 +1,7 @@
 // src/pages/HearingStarter.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import Dashboard from '../components/Dashboard';
 
 interface GameHistoryEntry {

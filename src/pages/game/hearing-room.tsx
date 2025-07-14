@@ -12,7 +12,7 @@ import {
 } from 'chart.js';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Bar, Pie } from 'react-chartjs-2';
+import { Pie } from 'react-chartjs-2';
 
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';

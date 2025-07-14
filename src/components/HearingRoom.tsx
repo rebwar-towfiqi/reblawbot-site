@@ -1,18 +1,17 @@
 // src/pages/HearingRoom.tsx
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { Pie, Bar } from 'react-chartjs-2';
 import {
-  Chart as ChartJS,
   ArcElement,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
   BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
   Title,
+  Tooltip,
 } from 'chart.js';
+import { useEffect, useState } from 'react';
+import { Bar,Pie } from 'react-chartjs-2';
 
 ChartJS.register(
   ArcElement,
