@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // pages/api/argument.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { open } from 'sqlite';
