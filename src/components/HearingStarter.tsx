@@ -1,4 +1,4 @@
-// src/components/HearingStarter.tsx
+/* eslint-disable unused-imports/no-unused-vars */
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -9,11 +9,18 @@ type GameHistoryEntry = {
   points: number;
 };
 
+type CaseData = {
+  id: string;
+  title: string;
+  summary: string;
+};
+
 export default function HearingStarter() {
   const router = useRouter();
   const [userPoints, setUserPoints] = useState<number>(0);
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const [history, setHistory] = useState<GameHistoryEntry[]>([]);
+  const [, setCaseData] = useState<CaseData | null>(null);
 
   useEffect(() => {
     setUserPoints(15);
@@ -22,6 +29,12 @@ export default function HearingStarter() {
       { date: '2025-06-25', points: 5 },
       { date: '2025-06-27', points: 10 },
     ]);
+
+    setCaseData({
+      id: '1',
+      title: 'پرونده قتل عمد',
+      summary: 'در این پرونده... (متن خلاصه)',
+    });
   }, []);
 
   const startHearing = () => {
@@ -29,20 +42,15 @@ export default function HearingStarter() {
   };
 
   return (
-    <div className='p-4 flex flex-col items-center gap-6'>
-      <Dashboard
-        totalPoints={totalPoints}
-        userPoints={userPoints}
-        history={history}
-      />
-      <h1 className='text-2xl font-bold'>🎯 شروع جلسه رسیدگی</h1>
-      <p className='text-center text-sm text-gray-600 max-w-md'>
-        برای شروع رسیدگی به پرونده، روی دکمه زیر کلیک کنید. در طول جلسه
-        می‌توانید به استدلال بپردازید و رأی هیئت منصفه را دریافت کنید.
+    <div className="p-4 flex flex-col items-center gap-6">
+      <Dashboard totalPoints={totalPoints} userPoints={userPoints} history={history} />
+      <h1 className="text-2xl font-bold">🎯 شروع جلسه رسیدگی</h1>
+      <p className="text-center text-sm text-gray-600 max-w-md">
+        برای شروع رسیدگی به پرونده، روی دکمه زیر کلیک کنید. در طول جلسه می‌توانید به استدلال بپردازید و رأی هیئت منصفه را دریافت کنید.
       </p>
       <button
         onClick={startHearing}
-        className='bg-blue-600 text-white px-6 py-2 rounded-xl shadow hover:bg-blue-700 transition'
+        className="bg-blue-600 text-white px-6 py-2 rounded-xl shadow hover:bg-blue-700 transition"
       >
         🚀 ورود به جلسه رسیدگی
       </button>
