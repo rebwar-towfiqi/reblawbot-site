@@ -1,5 +1,5 @@
-/* eslint-disable no-console */
-// src/components/HearingRoom.tsx
+'use client';
+
 import axios from 'axios';
 import {
   ArcElement,
@@ -11,6 +11,7 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
 
@@ -25,51 +26,48 @@ ChartJS.register(
 );
 
 type CaseData = {
-  id: number;
   title: string;
   summary: string;
 };
 
-type VoteStats = {
-  guilty: number;
-  innocent: number;
-  abstain: number;
+type StatsData = {
+  plaintiff: number;
+  defender: number;
 };
 
-export default function HearingRoom() {
+export default function HearingRoomPage() {
+  const params = useSearchParams();
+  const caseId = params?.get('caseId');
   const [caseData, setCaseData] = useState<CaseData | null>(null);
-  const [stats, setStats] = useState<VoteStats>({
-    guilty: 0,
-    innocent: 0,
-    abstain: 0,
-  });
-  const [vote, setVote] = useState<'guilty' | 'innocent' | 'abstain' | ''>('');
+  const [stats, setStats] = useState<StatsData>({ plaintiff: 0, defender: 0 });
+  const [vote, setVote] = useState('');
   const [argument, setArgument] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
 
-  const caseId = new URLSearchParams(window.location.search).get('caseId');
-
   useEffect(() => {
+    if (!caseId) return;
+
     const fetchData = async () => {
       try {
         const [caseRes, statRes] = await Promise.all([
           axios.get(`/api/case/${caseId}`),
           axios.get(`/api/argument/stats/${caseId}`),
         ]);
-        setCaseData(caseRes.data);
-        setStats(statRes.data);
-      } catch (error) {
-        console.error('❌ خطا در دریافت اطلاعات:', error);
+        setCaseData(caseRes.data as CaseData);
+        setStats(statRes.data as StatsData);
+      } catch {
+        // Ignored for ESLint
       } finally {
         setLoading(false);
       }
     };
+
     fetchData();
   }, [caseId]);
 
   const handleSubmit = async () => {
-    if (!vote || !argument.trim()) {
+    if (!vote || !argument) {
       alert('لطفاً رأی و استدلال خود را وارد کنید.');
       return;
     }
@@ -81,10 +79,9 @@ export default function HearingRoom() {
       });
       setSubmitted(true);
       const res = await axios.get(`/api/argument/stats/${caseId}`);
-      setStats(res.data);
-    } catch (err) {
-      console.error('❌ خطا در ارسال استدلال:', err);
-      alert('⚠️ خطا در ارسال استدلال. دوباره تلاش کنید.');
+      setStats(res.data as StatsData);
+    } catch {
+      alert('❌ خطا در ارسال اطلاعات.');
     }
   };
 
@@ -93,103 +90,96 @@ export default function HearingRoom() {
   if (!caseData)
     return <div className='p-6 text-center'>❌ پرونده‌ای یافت نشد.</div>;
 
-  const pieData = {
-    labels: ['مجرم', 'برائت', 'ممتنع'],
-    datasets: [
-      {
-        data: [stats.guilty, stats.innocent, stats.abstain],
-        backgroundColor: ['#dc2626', '#16a34a', '#eab308'],
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const barData = {
-    labels: ['مجرم', 'برائت', 'ممتنع'],
-    datasets: [
-      {
-        label: 'تعداد آرا',
-        data: [stats.guilty, stats.innocent, stats.abstain],
-        backgroundColor: ['#f87171', '#4ade80', '#fde047'],
-        borderRadius: 6,
-      },
-    ],
-  };
-
-  const barOptions = {
-    responsive: true,
-    plugins: {
-      legend: { display: false },
-    },
-  };
-
   return (
-    <div className='min-h-screen bg-[#1a1a1a] text-white p-6 flex flex-col items-center gap-6'>
-      <div className='bg-black/70 p-6 rounded-lg w-full max-w-3xl'>
-        <h2 className='text-2xl font-bold text-blue-200 mb-2'>
-          {caseData.title}
-        </h2>
-        <p className='text-md leading-relaxed mb-4'>
-          {caseData.summary.slice(0, 300)}...
+    <div className='min-h-screen bg-gray-100 text-gray-900 p-6 flex flex-col items-center gap-6'>
+      <div className='bg-white p-6 rounded-xl w-full max-w-3xl shadow'>
+        <h2 className='text-2xl font-bold mb-2'>{caseData.title}</h2>
+        <p className='text-md text-gray-600 leading-relaxed mb-4'>
+          {caseData.summary?.slice(0, 300)}...
         </p>
         <a
           href={`https://t.me/RebLCBot?start=${caseId}`}
-          className='inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 transition px-4 py-2 rounded-full text-white font-semibold shadow-lg'
           target='_blank'
           rel='noopener noreferrer'
+          className='inline-block mt-2 text-blue-600 hover:underline'
         >
-          🤖 مشاهده در ربات رسمی
+          🤖 مشاهده پرونده در بات تلگرام
         </a>
       </div>
 
-      <div className='bg-white text-black p-4 rounded-md w-full max-w-2xl'>
-        <h3 className='text-center text-lg font-semibold mb-2'>
-          📊 نمودار دایره‌ای
+      <div className='bg-white p-4 rounded-xl w-full max-w-2xl shadow'>
+        <h3 className='text-center font-bold mb-2'>
+          📊 نمودار دایره‌ای رأی کاربران
         </h3>
-        <Pie data={pieData} />
+        <Pie
+          data={{
+            labels: ['گناهکار', 'بی‌گناه'],
+            datasets: [
+              {
+                data: [stats.plaintiff, stats.defender],
+                backgroundColor: ['#ef4444', '#10b981'],
+              },
+            ],
+          }}
+        />
       </div>
 
-      <div className='bg-white text-black p-4 rounded-md w-full max-w-2xl'>
-        <h3 className='text-center text-lg font-semibold mb-2'>
-          📈 نمودار میله‌ای
-        </h3>
-        <Bar data={barData} options={barOptions} />
+      <div className='bg-white p-4 rounded-xl w-full max-w-2xl shadow'>
+        <h3 className='text-center font-bold mb-2'>📈 نمودار ستونی آرا</h3>
+        <Bar
+          data={{
+            labels: ['شاکی', 'متهم'],
+            datasets: [
+              {
+                label: 'تعداد رأی',
+                data: [stats.plaintiff, stats.defender],
+                backgroundColor: ['#f87171', '#4ade80'],
+              },
+            ],
+          }}
+          options={{
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+            },
+          }}
+        />
       </div>
 
       {!submitted && (
-        <div className='bg-black/60 p-6 rounded-lg w-full max-w-3xl'>
-          <h3 className='text-pink-300 text-lg mb-4 font-bold'>
-            🧠 رأی شما و استدلال
+        <div className='bg-white p-6 rounded-xl w-full max-w-3xl shadow space-y-4'>
+          <h3 className='text-xl font-bold text-gray-800'>
+            🧠 ثبت رأی و استدلال
           </h3>
-          <div className='flex gap-4 mb-4'>
+          <div className='flex gap-4'>
             <button
-              className={`px-4 py-2 rounded ${vote === 'guilty' ? 'bg-red-700' : 'bg-gray-700'}`}
-              onClick={() => setVote('guilty')}
+              onClick={() => setVote('plaintiff')}
+              className={`px-4 py-2 rounded ${
+                vote === 'plaintiff' ? 'bg-red-600 text-white' : 'bg-gray-200'
+              }`}
             >
-              مجرم
+              گناهکار
             </button>
             <button
-              className={`px-4 py-2 rounded ${vote === 'innocent' ? 'bg-green-700' : 'bg-gray-700'}`}
-              onClick={() => setVote('innocent')}
+              onClick={() => setVote('defender')}
+              className={`px-4 py-2 rounded ${
+                vote === 'defender' ? 'bg-green-600 text-white' : 'bg-gray-200'
+              }`}
             >
-              برائت
-            </button>
-            <button
-              className={`px-4 py-2 rounded ${vote === 'abstain' ? 'bg-yellow-600' : 'bg-gray-700'}`}
-              onClick={() => setVote('abstain')}
-            >
-              ممتنع
+              بی‌گناه
             </button>
           </div>
+
           <textarea
             value={argument}
             onChange={(e) => setArgument(e.target.value)}
-            placeholder='📝 استدلال خود را بنویسید...'
-            className='w-full h-32 p-3 rounded bg-white text-black'
+            placeholder='📝 لطفاً استدلال خود را بنویسید...'
+            className='w-full h-28 p-3 border rounded'
           />
+
           <button
             onClick={handleSubmit}
-            className='mt-4 bg-purple-700 hover:bg-purple-800 text-white px-6 py-2 rounded'
+            className='bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700'
           >
             📬 ارسال
           </button>
@@ -197,7 +187,7 @@ export default function HearingRoom() {
       )}
 
       {submitted && (
-        <div className='text-green-400 font-bold text-lg mt-4'>
+        <div className='text-green-600 font-bold text-lg mt-4'>
           ✅ رأی شما ثبت شد
         </div>
       )}
