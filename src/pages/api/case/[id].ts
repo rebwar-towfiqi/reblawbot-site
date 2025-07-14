@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { NextApiRequest, NextApiResponse } from 'next';
 import path from 'path';
 import { open } from 'sqlite';
