@@ -1,4 +1,4 @@
-import { GetStaticPropsContext } from 'next';
+
 import Head from 'next/head';
 import { useTranslations } from 'next-intl';
 
@@ -36,13 +36,4 @@ export default function Home() {
       </main>
     </>
   );
-}
-
-export async function getStaticProps(context: GetStaticPropsContext) {
-  const { locale } = context;
-  const messages = (await import(`@/locales/${locale}/common.json`)).default;
-
-  return {
-    props: { messages },
-  };
 }
