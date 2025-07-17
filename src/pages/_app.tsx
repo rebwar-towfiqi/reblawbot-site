@@ -11,7 +11,7 @@ export default function App({ Component, pageProps }: AppProps) {
       //  locale را از آدرس URL می‌خوانیم
       locale={locale ?? defaultLocale ?? 'fa'}
       // برای جلوگیری از ENVIRONMENT_FALLBACK حتماً یک timeZone مشخص کنید
-      timeZone="Asia/Tehran"
+      timeZone='Asia/Tehran'
       // messages باید از getStaticProps یا getServerSideProps بیاید
       messages={pageProps.messages}
     >
@@ -19,5 +19,3 @@ export default function App({ Component, pageProps }: AppProps) {
     </NextIntlClientProvider>
   );
 }
-
-
