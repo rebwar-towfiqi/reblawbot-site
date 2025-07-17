@@ -1,6 +1,6 @@
 // next.config.js
 
-const path = require('path');
+import { resolve } from 'path';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -14,12 +14,12 @@ const nextConfig = {
   webpack(config) {
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@': path.resolve(__dirname, 'src'),
-      '@locales': path.resolve(__dirname, 'src/locales'),
-      '~': path.resolve(__dirname, 'public'),
+      '@': resolve(__dirname, 'src'),
+      '@locales': resolve(__dirname, 'src/locales'),
+      '~': resolve(__dirname, 'public'),
     };
     return config;
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
