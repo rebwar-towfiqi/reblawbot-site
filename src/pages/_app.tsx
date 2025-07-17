@@ -1,21 +1,23 @@
-import type { AppProps } from 'next/app';
-import { IntlProvider } from 'next-intl';
+// src/pages/_app.tsx
+import { AppProps } from 'next/app';
+import { useRouter } from 'next/router';
+import { NextIntlClientProvider } from 'next-intl';
 
-import '../styles/globals.css';
+export default function App({ Component, pageProps }: AppProps) {
+  const { locale, defaultLocale } = useRouter();
 
-import Footer from '../components/Footer';
-import Navbar from '../components/Navbar';
-
-function MyApp({ Component, pageProps, router }: AppProps) {
-  // استخراج نام زبان از آدرس (fa/en/ku)
-  const locale = router.locale || 'fa';
   return (
-    <IntlProvider locale={locale} messages={pageProps.messages}>
-      <Navbar />
+    <NextIntlClientProvider
+      //  locale را از آدرس URL می‌خوانیم
+      locale={locale ?? defaultLocale ?? 'fa'}
+      // برای جلوگیری از ENVIRONMENT_FALLBACK حتماً یک timeZone مشخص کنید
+      timeZone="Asia/Tehran"
+      // messages باید از getStaticProps یا getServerSideProps بیاید
+      messages={pageProps.messages}
+    >
       <Component {...pageProps} />
-      <Footer />
-    </IntlProvider>
+    </NextIntlClientProvider>
   );
 }
 
-export default MyApp;
+
