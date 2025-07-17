@@ -1,7 +1,7 @@
 import type { AppProps } from 'next/app';
 import { IntlProvider } from 'next-intl';
 
-import '../styles/globals.css';
+import '@/styles/globals.css';
 
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
