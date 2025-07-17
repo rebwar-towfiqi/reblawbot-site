@@ -1,18 +1,25 @@
-// next.config.cjs
-import { resolve } from 'path';
+// next.config.js
+
+const path = require('path');
 
 /** @type {import('next').NextConfig} */
-export const reactStrictMode = true;
-export const i18n = {
+const nextConfig = {
+  reactStrictMode: true,
+
+  i18n: {
     locales: ['fa', 'en', 'ku'],
-    defaultLocale: 'fa'
-};
-export function webpack(config) {
+    defaultLocale: 'fa',
+  },
+
+  webpack(config) {
     config.resolve.alias = {
-        ...(config.resolve.alias || {}),
-        '@': resolve(__dirname, 'src'),
-        '@locales': resolve(__dirname, 'src', 'locales'),
-        '~': resolve(__dirname, 'public')
+      ...config.resolve.alias,
+      '@': path.resolve(__dirname, 'src'),
+      '@locales': path.resolve(__dirname, 'src/locales'),
+      '~': path.resolve(__dirname, 'public'),
     };
     return config;
-}
+  },
+};
+
+module.exports = nextConfig;
