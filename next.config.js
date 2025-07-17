@@ -1,4 +1,4 @@
-// next.config.js
+// next.config.cjs
 import { resolve } from 'path';
 
 /** @type {import('next').NextConfig} */
