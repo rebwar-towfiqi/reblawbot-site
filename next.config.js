@@ -1,26 +1,34 @@
 // next.config.js
-import { resolve } from 'path';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ۱. فعال‌سازی React Strict Mode
+  // فعال‌سازی React Strict Mode
   reactStrictMode: true,
 
-  // ۲. پیکربندی بین‌المللی‌سازی (i18n)
+  // پیکربندی بین‌المللی‌سازی
   i18n: {
     locales: ['fa', 'en', 'ku'],
     defaultLocale: 'fa'
   },
 
-  // ۳. تعریف alias برای مسیرهای مرجع
+  // تعریف alias برای وارد کردن ماژول‌ها
   webpack(config) {
+    // تعریف __filename و __dirname در مد ESM
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
       // مسیر ریشه‌ی سورس
-      '@': resolve(__dirname, 'src'),
+      '@': join(__dirname, 'src'),
       // مسیر فایل‌های ترجمه
-      '@locales': resolve(__dirname, 'src', 'locales')
+      '@locales': join(__dirname, 'src', 'locales'),
+      // مسیر public
+      '~': join(__dirname, 'public')
     };
+
     return config;
   }
 };
