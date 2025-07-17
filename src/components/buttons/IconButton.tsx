@@ -40,17 +40,16 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
     const disabled = isLoading || buttonDisabled;
 
     const variantClasses = [
-      variant === 'primary' && 'bg-primary-500 text-white border-primary-600 border hover:bg-primary-600 hover:text-white active:bg-primary-700 disabled:bg-primary-700',
-      variant === 'outline' &&
-        [
-          'text-primary-500 border-primary-500 border hover:bg-primary-50 active:bg-primary-100 disabled:bg-primary-100',
-          isDarkBg && 'hover:bg-gray-900 active:bg-gray-800 disabled:bg-gray-800',
-        ],
-      variant === 'ghost' &&
-        [
-          'text-primary-500 shadow-none hover:bg-primary-50 active:bg-primary-100 disabled:bg-primary-100',
-          isDarkBg && 'hover:bg-gray-900 active:bg-gray-800 disabled:bg-gray-800',
-        ],
+      variant === 'primary' &&
+        'bg-primary-500 text-white border-primary-600 border hover:bg-primary-600 hover:text-white active:bg-primary-700 disabled:bg-primary-700',
+      variant === 'outline' && [
+        'text-primary-500 border-primary-500 border hover:bg-primary-50 active:bg-primary-100 disabled:bg-primary-100',
+        isDarkBg && 'hover:bg-gray-900 active:bg-gray-800 disabled:bg-gray-800',
+      ],
+      variant === 'ghost' && [
+        'text-primary-500 shadow-none hover:bg-primary-50 active:bg-primary-100 disabled:bg-primary-100',
+        isDarkBg && 'hover:bg-gray-900 active:bg-gray-800 disabled:bg-gray-800',
+      ],
       variant === 'light' &&
         'bg-white text-gray-700 border border-gray-300 hover:text-dark hover:bg-gray-100 active:bg-white/80 disabled:bg-gray-200',
       variant === 'dark' &&
@@ -81,14 +80,13 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         {isLoading && (
           <div
             className={cn(
-  'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
-  variant === 'primary' || variant === 'dark'
-    ? 'text-white'
-    : variant === 'light'
-    ? 'text-black'
-    : 'text-primary-500'
-)}
-
+              'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
+              variant === 'primary' || variant === 'dark'
+                ? 'text-white'
+                : variant === 'light'
+                  ? 'text-black'
+                  : 'text-primary-500',
+            )}
           >
             <ImSpinner2 className='animate-spin' />
           </div>

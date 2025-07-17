@@ -18,8 +18,8 @@ const PrimaryLink = React.forwardRef<HTMLAnchorElement, PrimaryLinkProps>(
       variant === 'primary'
         ? 'text-primary-500 hover:text-primary-600 active:text-primary-700 disabled:text-primary-200'
         : variant === 'basic'
-        ? 'text-black hover:text-gray-600 active:text-gray-800 disabled:text-gray-300'
-        : '';
+          ? 'text-black hover:text-gray-600 active:text-gray-800 disabled:text-gray-300'
+          : '';
 
     return (
       <UnstyledLink
@@ -30,13 +30,13 @@ const PrimaryLink = React.forwardRef<HTMLAnchorElement, PrimaryLinkProps>(
           'focus-visible:ring-primary-500 focus:outline-none focus-visible:rounded focus-visible:ring focus-visible:ring-offset-2',
           'font-medium',
           variantClasses,
-          className
+          className,
         )}
       >
         {children}
       </UnstyledLink>
     );
-  }
+  },
 );
 
 PrimaryLink.displayName = 'PrimaryLink';

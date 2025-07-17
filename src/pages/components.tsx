@@ -17,13 +17,16 @@ export default function ComponentsPage() {
         <div className='layout'>
           <h1 className='text-4xl font-bold'>🎨 کامپوننت‌های سفارشی</h1>
           <p className='mt-2 text-lg'>
-            در این صفحه می‌توانید تمام دکمه‌ها و اجزای طراحی‌شده را مشاهده و آزمایش کنید.
+            در این صفحه می‌توانید تمام دکمه‌ها و اجزای طراحی‌شده را مشاهده و
+            آزمایش کنید.
           </p>
 
           <div className='mt-8 flex flex-wrap gap-2'>
             <Button
               onClick={toggleMode}
-              variant={mode === 'dark' ? 'light' : 'dark'} href=""            >
+              variant={mode === 'dark' ? 'light' : 'dark'}
+              href=''
+            >
               تغییر تم به {mode === 'dark' ? 'روشن' : 'تاریک'}
             </Button>
           </div>

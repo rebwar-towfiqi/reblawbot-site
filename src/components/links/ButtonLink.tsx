@@ -22,7 +22,7 @@ const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
       href,
       ...rest
     },
-    ref
+    ref,
   ) => {
     const baseClasses =
       'inline-flex items-center font-medium rounded focus:outline-none focus-visible:ring focus-visible:ring-primary-500 shadow-sm';
@@ -64,7 +64,7 @@ const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
         {children}
       </Link>
     );
-  }
+  },
 );
 
 ButtonLink.displayName = 'ButtonLink';
