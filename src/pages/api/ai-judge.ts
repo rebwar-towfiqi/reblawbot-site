@@ -24,6 +24,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       driver: sqlite3.Database,
     });
 
+    // Check if verdict already exists
+    const existing = await db.get(
+      'SELECT verdict, reason FROM ai_judgments WHERE case_id = ?',
+      [case_id]
+    );
+    if (existing) {
+      return res.status(200).json(existing);
+    }
+
     const argumentsData = await db.all(
       'SELECT vote, argument FROM arguments WHERE case_id = ?',
       [case_id]
@@ -67,8 +76,15 @@ Return your answer in this JSON format:
     }
 
     const verdictData = JSON.parse(json);
+
+    await db.run(
+      'INSERT OR REPLACE INTO ai_judgments (case_id, verdict, reason) VALUES (?, ?, ?)',
+      [case_id, verdictData.verdict, verdictData.reason]
+    );
+
     res.status(200).json(verdictData);
   } catch (error) {
+
     // eslint-disable-next-line no-console
     console.error('❌ AI Judge Error:', error);
     res.status(500).json({ message: 'Internal error' });
