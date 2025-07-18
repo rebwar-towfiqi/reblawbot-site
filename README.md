@@ -1,122 +1,52 @@
-# Next.js + Tailwind CSS + TypeScript Starter and Boilerplate
+# ⚖️ RebLawBot & Virtual Court Game
 
-<div align="center">
-  <h2>🔋 ts-nextjs-tailwind-starter</h2>
-  <p>Next.js + Tailwind CSS + TypeScript starter packed with useful development features.</p>
-  <p>Made by <a href="https://theodorusclarence.com">Theodorus Clarence</a></p>
+> **Redefine justice with blockchain.**  
+> RebLawBot and the Virtual Court Game are pioneering tools to reshape how justice is delivered — combining the power of **AI**, **blockchain**, and **legal innovation** for a more transparent and participatory legal ecosystem.
 
-[![GitHub Repo stars](https://img.shields.io/github/stars/theodorusclarence/ts-nextjs-tailwind-starter)](https://github.com/theodorusclarence/ts-nextjs-tailwind-starter/stargazers)
-[![Depfu](https://badges.depfu.com/badges/fc6e730632ab9dacaf7df478a08684a7/overview.svg)](https://depfu.com/github/theodorusclarence/ts-nextjs-tailwind-starter?project_id=30160)
-[![Last Update](https://img.shields.io/badge/deps%20update-every%20sunday-blue.svg)](https://shields.io/)
+---
 
-</div>
+## 💖 Support the Project
 
-## Features
+If you believe in our mission to make intelligent justice accessible to all, please consider supporting us:
 
-This repository is 🔋 battery packed with:
+- 🌐 [Donate with TON (Tonkeeper)](https://tonkeeper.com/transfer/UQBkRlKAi6Rk4EuZqJ8QrxDgugKK1kLUS6Yp4lOE6MPiRkGW)
+- 🤖 [Join our Telegram Bot](https://t.me/RebLCBot)
+- 👤 [Contact the Founder – Rebwar Towfiqi](https://t.me/Rebwar6384)
 
-- ⚡️ Next.js 13
-- ⚛️ React 18
-- ✨ TypeScript
-- 💨 Tailwind CSS 3 — Configured with CSS Variables to extend the **primary** color
-- 💎 Pre-built Components — Components that will **automatically adapt** with your brand color, [check here for the demo](https://tsnext-tw.thcl.dev/components)
-- 🃏 Jest — Configured for unit testing
-- 📈 Absolute Import and Path Alias — Import components using `@/` prefix
-- 📏 ESLint — Find and fix problems in your code, also will **auto sort** your imports
-- 💖 Prettier — Format your code consistently
-- 🐶 Husky & Lint Staged — Run scripts on your staged files before they are committed
-- 🤖 Conventional Commit Lint — Make sure you & your teammates follow conventional commit
-- ⏰ Release Please — Generate your changelog by activating the `release-please` workflow
-- 👷 Github Actions — Lint your code on PR
-- 🚘 Automatic Branch and Issue Autolink — Branch will be automatically created on issue **assign**, and auto linked on PR
-- 🔥 Snippets — A collection of useful snippets
-- 👀 Default Open Graph — Awesome open graph generated using [og](https://github.com/theodorusclarence/og), fork it and deploy!
-- 🗺 Site Map — Automatically generate sitemap.xml
-- 📦 Expansion Pack — Easily install common libraries, additional components, and configs
+Your support empowers the future of open justice.
 
-See the 👉 [feature details and changelog](https://github.com/theodorusclarence/ts-nextjs-tailwind-starter/blob/main/CHANGELOG.md) 👈 for more.
+---
 
-You can also check all of the **details and demos** on my blog post:
+## 🧠 Key Features
 
-- [One-stop Starter to Maximize Efficiency on Next.js & Tailwind CSS Projects](https://theodorusclarence.com/blog/one-stop-starter)
+- AI-powered legal Q&A (using GPT + national & international law)
+- Freemium model: free daily usage + paid upgrades via RLC, TON, or fiat
+- Virtual Legal Debate Game to simulate courtrooms and verdicts
+- Smart AI Judge for unbiased decision-making
+- User voting with live pie/bar charts
+- Telegram Mini App integration
 
-## Getting Started
+---
 
-### 1. Clone this template using one of the three ways:
+## 🎮 Virtual Court Game Highlights
 
-1. Use this repository as template
+- Plaintiff and Defendant submit legal arguments
+- Audience votes on the outcome
+- An AI Judge issues the final verdict
+- Players earn points and RebLawCoin (RLC) based on alignment with the AI verdict
 
-   **Disclosure:** by using this repository as a template, there will be an attribution on your repository.
+---
+<img width="1024" height="1536" alt="court-bg" src="https://github.com/user-attachments/assets/eb31a6c9-9bb0-409e-8d60-42b99d9742f1" />
 
-   I'll appreciate if you do, so this template can be known by others too 😄
-
-   ![Use as template](https://user-images.githubusercontent.com/55318172/129183039-1a61e68d-dd90-4548-9489-7b3ccbb35810.png)
-
-2. Using `create-next-app`
-
-   ```bash
-   npx create-next-app -e https://github.com/theodorusclarence/ts-nextjs-tailwind-starter project-name
-   ```
-
-3. Using `degit`
-
-   ```bash
-   npx degit theodorusclarence/ts-nextjs-tailwind-starter YOUR_APP_NAME
-   ```
-
-4. Deploy to Vercel
-
-   [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https%3A%2F%2Fgithub.com%2Ftheodorusclarence%2Fts-nextjs-tailwind-starter)
-
-### 2. Install dependencies
-
-It is encouraged to use **yarn** so the husky hooks can work properly.
+## 🚀 Run Locally
 
 ```bash
-yarn install
-```
+git clone https://github.com/rebwar-towfiqi/reblawbot-site.com.git
+cd reblawbot-site.com
+npm install
+npm run dev
 
-### 3. Run the development server
+![RebLaw Game Preview](https://reblawbot.com/images/reblaw-banner.jpg)
 
-You can start the server using this command:
+© 2025 Rebwar Towfiqi. All rights reserved.
 
-```bash
-yarn dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. You can start editing the page by modifying `src/pages/index.tsx`.
-
-### 4. Change defaults
-
-There are some things you need to change including title, urls, favicons, etc.
-
-Find all comments with !STARTERCONF, then follow the guide.
-
-Don't forget to change the package name in package.json
-
-### 5. Commit Message Convention
-
-This starter is using [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/), it is mandatory to use it to commit changes.
-
-## Projects using ts-nextjs-tailwind-starter
-
-<!--
-TEMPLATE
-- [sitename](https://sitelink.com) ([Source](https://github.com/githublink))
-- [sitename](https://sitelink.com)
--->
-
-- [theodorusclarence.com](https://theodorusclarence.com) ([Source](https://github.com/theodorusclarence/theodorusclarence.com))
-- [Notiolink](https://notiolink.thcl.dev/) ([Source](https://github.com/theodorusclarence/notiolink))
-
-Are you using this starter? Please add your page (and repo) to the end of the list via a [Pull Request](https://github.com/theodorusclarence/ts-nextjs-tailwind-starter/edit/main/README.md). 😃
-
-## Expansion Pack 📦
-
-This starter is now equipped with an [expansion pack](https://github.com/theodorusclarence/expansion-pack).
-
-You can easily add expansion such as React Hook Form + Components, Storybook, and more just using a single command line.
-
-https://user-images.githubusercontent.com/55318172/146631994-e1cac137-1664-4cfe-950b-a96decc1eaa6.mp4
-
-Check out the [expansion pack repository](https://github.com/theodorusclarence/expansion-pack) for the commands
