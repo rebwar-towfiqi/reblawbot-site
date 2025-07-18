@@ -37,7 +37,7 @@ Your support empowers the future of open justice.
 
 ---
 
-<img width="1024" height="1536" alt="court-bg" src="https://github.com/user-attachments/assets/eb31a6c9-9bb0-409e-8d60-42b99d9742f1" />
+![RebLaw Game Preview](/images/reblaw-banner.jpg)
 
 ## 🚀 Run Locally
 
