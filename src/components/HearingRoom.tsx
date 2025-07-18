@@ -36,6 +36,11 @@ type StatsData = {
   defender: number;
 };
 
+type AIVerdict = {
+  verdict: string;
+  reason: string;
+};
+
 export default function HearingRoomPage() {
   const params = useSearchParams();
   const caseId = params?.get('caseId');
@@ -45,6 +50,8 @@ export default function HearingRoomPage() {
   const [argument, setArgument] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
+  const [aiVerdict, setAiVerdict] = useState<AIVerdict | null>(null);
+  const [judging, setJudging] = useState(false);
 
   useEffect(() => {
     if (!caseId) return;
@@ -55,10 +62,10 @@ export default function HearingRoomPage() {
           axios.get(`/api/case/${caseId}`),
           axios.get(`/api/argument/stats/${caseId}`),
         ]);
-        setCaseData(caseRes.data as CaseData);
-        setStats(statRes.data as StatsData);
+        setCaseData(caseRes.data);
+        setStats(statRes.data);
       } catch {
-        // fail silently
+        // silent fail
       } finally {
         setLoading(false);
       }
@@ -80,25 +87,31 @@ export default function HearingRoomPage() {
       });
       setSubmitted(true);
       const res = await axios.get(`/api/argument/stats/${caseId}`);
-      setStats(res.data as StatsData);
+      setStats(res.data);
     } catch {
       alert('❌ خطا در ارسال اطلاعات.');
     }
   };
 
+  const handleJudge = async () => {
+    setJudging(true);
+    try {
+      const res = await axios.post('/api/ai-judge', { case_id: caseId });
+      setAiVerdict(res.data);
+    } catch {
+      alert('❌ خطا در دریافت رأی قاضی');
+    } finally {
+      setJudging(false);
+    }
+  };
+
   if (loading)
     return (
-      <div className='p-6 text-center text-blue-600 animate-pulse'>
-        ⏳ در حال بارگذاری پرونده...
-      </div>
+      <div className='p-6 text-center text-blue-600 animate-pulse'>⏳ در حال بارگذاری پرونده...</div>
     );
 
   if (!caseData)
-    return (
-      <div className='p-6 text-center text-red-500'>
-        ❌ پرونده‌ای یافت نشد.
-      </div>
-    );
+    return <div className='p-6 text-center text-red-500'>❌ پرونده‌ای یافت نشد.</div>;
 
   return (
     <div className='min-h-screen bg-gradient-to-b from-gray-50 to-gray-200 text-gray-900 p-6 flex flex-col items-center gap-6'>
@@ -127,9 +140,7 @@ export default function HearingRoomPage() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
       >
-        <h3 className='text-center font-bold mb-2 text-gray-700'>
-          📊 نمودار دایره‌ای رأی کاربران
-        </h3>
+        <h3 className='text-center font-bold mb-2 text-gray-700'>📊 نمودار دایره‌ای رأی کاربران</h3>
         <Pie
           data={{
             labels: ['گناهکار', 'بی‌گناه'],
@@ -177,16 +188,12 @@ export default function HearingRoomPage() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.6 }}
         >
-          <h3 className='text-xl font-bold text-gray-800'>
-            🧠 ثبت رأی و استدلال
-          </h3>
+          <h3 className='text-xl font-bold text-gray-800'>🧠 ثبت رأی و استدلال</h3>
           <div className='flex gap-4'>
             <button
               onClick={() => setVote('plaintiff')}
               className={`px-4 py-2 rounded font-semibold transition-all duration-200 ${
-                vote === 'plaintiff'
-                  ? 'bg-red-600 text-white scale-105'
-                  : 'bg-gray-200'
+                vote === 'plaintiff' ? 'bg-red-600 text-white scale-105' : 'bg-gray-200'
               }`}
             >
               گناهکار
@@ -194,9 +201,7 @@ export default function HearingRoomPage() {
             <button
               onClick={() => setVote('defender')}
               className={`px-4 py-2 rounded font-semibold transition-all duration-200 ${
-                vote === 'defender'
-                  ? 'bg-green-600 text-white scale-105'
-                  : 'bg-gray-200'
+                vote === 'defender' ? 'bg-green-600 text-white scale-105' : 'bg-gray-200'
               }`}
             >
               بی‌گناه
@@ -220,13 +225,40 @@ export default function HearingRoomPage() {
         </motion.div>
       )}
 
-      {submitted && (
+      {submitted && !aiVerdict && (
         <motion.div
-          className='text-green-600 font-bold text-lg mt-4'
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
+          className='mt-6'
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
         >
-          ✅ رأی شما ثبت شد. با تشکر از مشارکت شما!
+          <button
+            onClick={handleJudge}
+            className='bg-purple-600 text-white px-6 py-3 rounded shadow hover:bg-purple-700 transition-all'
+          >
+            ⚖️ مشاهده رأی قاضی هوشمند
+          </button>
+          {judging && (
+            <div className='text-sm text-gray-500 mt-2 animate-pulse'>⏳ در حال بررسی استدلال‌ها...</div>
+          )}
+        </motion.div>
+      )}
+
+      {aiVerdict && (
+        <motion.div
+          className='bg-white p-6 rounded-xl w-full max-w-2xl shadow mt-6 border-2 border-purple-400'
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <h3 className='text-xl font-bold text-purple-700 mb-2'>⚖️ رأی نهایی قاضی هوش مصنوعی</h3>
+          <p className='mb-1'>
+            <strong>نتیجه:</strong>{' '}
+            {aiVerdict.verdict === 'plaintiff'
+              ? '🔴 شاکی پیروز است'
+              : '🟢 متهم بی‌گناه است'}
+          </p>
+          <p className='text-gray-700'>
+            <strong>توجیه:</strong> {aiVerdict.reason}
+          </p>
         </motion.div>
       )}
     </div>
