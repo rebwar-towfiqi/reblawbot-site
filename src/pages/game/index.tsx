@@ -1,35 +1,33 @@
-// 📄 File: src/pages/index.tsx
+// 📄 File: src/pages/game/index.tsx
 
 'use client';
 
 import Head from 'next/head';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 
-export default function Home() {
-
-  const t = useTranslations('common');
+export default function GameHome() {
 
   useEffect(() => {
-    document.body.style.background = 'linear-gradient(to bottom, #f8fafc, #ffffff)';
+    document.body.style.background = 'linear-gradient(to bottom, #f0f4ff, #ffffff)';
   }, []);
 
   return (
     <>
       <Head>
-        <title>RebLawBot - AI Courtroom Game</title>
+        <title>RebLawBot Game - Courtroom Mode</title>
       </Head>
+
       <div className="flex flex-col items-center justify-center min-h-screen text-center p-8">
-        <h1 className="text-4xl font-extrabold text-blue-800 drop-shadow-lg mb-4">
-          ⚖️ Welcome to the RebLaw Courtroom
+        <h1 className="text-4xl font-extrabold text-indigo-800 drop-shadow mb-4">
+          ⚔️ Legal Debate Arena
         </h1>
         <p className="text-lg text-gray-600 max-w-xl mb-6">
-          Experience justice through AI-powered legal debates. Choose a case, take a side, and let the community—and the AI judge—decide.
+          Step into the courtroom, pick your role, and argue your case in front of a global audience and our AI judge.
         </p>
         <Link href="/game/case-selection" passHref>
-          <span className="bg-purple-600 hover:bg-purple-700 text-white text-lg font-medium px-6 py-3 rounded-xl shadow inline-block cursor-pointer">
-            🎮 Start Legal Game
+          <span className="bg-indigo-600 hover:bg-indigo-700 text-white text-lg font-medium px-6 py-3 rounded-xl shadow-lg cursor-pointer">
+            🎮 Choose a Legal Case
           </span>
         </Link>
       </div>
