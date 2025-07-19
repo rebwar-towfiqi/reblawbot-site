@@ -1,14 +1,19 @@
-// next.config.js
+// 📄 File: next.config.mjs
+import path from 'path';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const path = require('path');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
 
   i18n: {
-    locales: ['fa', 'en', 'ku'],
-    defaultLocale: 'fa',
+    locales: ['en', 'fa', 'ku'],
+    defaultLocale: 'en',
+    localeDetection: false, // 🔧 مقدار صحیح
   },
 
   webpack(config) {
@@ -22,4 +27,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;

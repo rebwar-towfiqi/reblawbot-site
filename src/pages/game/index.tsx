@@ -1,40 +1,35 @@
+// 📄 File: src/pages/game/index.tsx
+
 'use client';
 
+import Head from 'next/head';
 import Link from 'next/link';
-import React from 'react';
+import { useEffect } from 'react';
 
-export default function GameHomePage() {
+export default function GameHome() {
+  useEffect(() => {
+    document.body.style.background = 'linear-gradient(to bottom, #f0f4ff, #ffffff)';
+  }, []);
+
   return (
-    <div className='min-h-screen bg-gray-900 text-white p-6 flex flex-col items-center justify-center gap-8'>
-      <div className='text-center'>
-        <h1 className='text-3xl md:text-4xl font-bold mb-4 text-blue-300'>
-          🎮 بازی دادگاه عدالت
+    <>
+      <Head>
+        <title>RebLawBot Game - Courtroom Mode</title>
+      </Head>
+
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-8">
+        <h1 className="text-4xl font-extrabold text-indigo-800 drop-shadow mb-4">
+          ⚔️ Legal Debate Arena
         </h1>
-        <p className='text-lg md:text-xl text-gray-300'>
-          به عنوان قاضی، شاکی یا متهم وارد پرونده‌های حقوقی شوید و رأی دهید!
+        <p className="text-lg text-gray-600 max-w-xl mb-6">
+          Step into the courtroom, pick your role, and argue your case in front of a global audience and our AI judge.
         </p>
-      </div>
-
-      <div className='flex flex-col sm:flex-row gap-4'>
-        <Link href='/game/role'>
-          <button className='bg-green-600 hover:bg-green-700 px-6 py-3 rounded text-white text-lg font-bold'>
-            🚪 ورود به بازی
-          </button>
-        </Link>
-        <Link
-          href='https://t.me/RebLCBot'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          <button className='bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded text-white text-lg font-bold'>
-            🤖 ورود به ربات RebLawBot
-          </button>
+        <Link href="/game/case-selection" passHref legacyBehavior>
+          <a className="bg-indigo-600 hover:bg-indigo-700 text-white text-lg font-medium px-6 py-3 rounded-xl shadow-lg cursor-pointer">
+            🎮 Choose a Legal Case
+          </a>
         </Link>
       </div>
-
-      <p className='text-sm text-gray-400 mt-8'>
-        نسخه آزمایشی – بازخوردهای شما باعث بهبود بازی خواهد شد.
-      </p>
-    </div>
+    </>
   );
 }

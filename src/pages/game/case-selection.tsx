@@ -1,67 +1,42 @@
-/* eslint-disable no-console */
-'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// 📄 File: src/pages/game/case-selection.tsx
+
 import axios from 'axios';
-import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
-type CaseItem = {
-  id: number;
-  title: string;
-  summary: string;
-};
-
-export default function CaseSelectionPage() {
+export default function CaseSelection() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const role = searchParams?.get('role') ?? 'none';
-
-  const [cases, setCases] = useState<CaseItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [cases, setCases] = useState<any[]>([]);
 
   useEffect(() => {
-    axios
-      .get<CaseItem[]>('/api/cases')
-      .then((res) => {
-        setCases(res.data);
-        setLoading(false);
-      })
-      .catch((err: unknown) => {
-        console.error('❌ خطا در دریافت پرونده‌ها:', err);
-        setLoading(false);
-      });
+    axios.get('/api/cases')
+      .then(res => setCases(res.data))
+      // eslint-disable-next-line no-console
+      .catch(err => console.error('Failed to load cases:', err));
   }, []);
 
-  const handleSelectCase = (caseId: number) => {
-    router.push(`/game/hearing-room?case=${caseId}&role=${role}`);
+  const handleSelect = (caseId: number) => {
+    router.push(`/game/role-selector?case=${caseId}`);
   };
 
-  if (loading) {
-    return (
-      <div className='p-6 text-center text-white'>
-        ⏳ در حال بارگذاری پرونده‌ها...
-      </div>
-    );
-  }
+
 
   return (
-    <div className='min-h-screen bg-gray-950 text-white p-6'>
-      <h1 className='text-2xl font-bold text-center mb-6'>📂 انتخاب پرونده</h1>
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto'>
-        {cases.map((item) => (
-          <div
-            key={item.id}
-            onClick={() => handleSelectCase(item.id)}
-            className='bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-700 transition'
+    <div className="max-w-4xl mx-auto p-6 space-y-4">
+      <h1 className="text-2xl font-bold">Select a Legal Case</h1>
+      {cases.map((item) => (
+        <div key={item.id} className="border rounded p-4 shadow hover:bg-gray-50">
+          <h2 className="text-lg font-semibold">{item.title}</h2>
+          <p className="text-gray-600 mb-2 line-clamp-3">{item.description}</p>
+          <button
+            onClick={() => handleSelect(item.id)}
+            className="bg-blue-600 text-white px-4 py-2 rounded"
           >
-            <h2 className='text-xl font-semibold text-blue-400 mb-2'>
-              {item.title}
-            </h2>
-            <p className='text-sm text-gray-300'>
-              {item.summary.slice(0, 100)}...
-            </p>
-          </div>
-        ))}
-      </div>
+            Choose Case
+          </button>
+        </div>
+      ))}
     </div>
   );
 }

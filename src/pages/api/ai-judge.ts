@@ -8,7 +8,14 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+<<<<<<< HEAD
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+=======
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
+>>>>>>> 7d8503b6bb9a2b09051cbd5c45b4afe2b32536c8
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
@@ -24,9 +31,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       driver: sqlite3.Database,
     });
 
+<<<<<<< HEAD
     const argumentsData = await db.all(
       'SELECT vote, argument FROM arguments WHERE case_id = ?',
       [case_id]
+=======
+    // Check if verdict already exists
+    const existing = await db.get(
+      'SELECT verdict, reason FROM ai_judgments WHERE case_id = ?',
+      [case_id],
+    );
+    if (existing) {
+      return res.status(200).json(existing);
+    }
+
+    const argumentsData = await db.all(
+      'SELECT vote, argument FROM arguments WHERE case_id = ?',
+      [case_id],
+>>>>>>> 7d8503b6bb9a2b09051cbd5c45b4afe2b32536c8
     );
 
     const plaintiffArguments = argumentsData
@@ -67,8 +89,20 @@ Return your answer in this JSON format:
     }
 
     const verdictData = JSON.parse(json);
+<<<<<<< HEAD
     res.status(200).json(verdictData);
   } catch (error) {
+=======
+
+    await db.run(
+      'INSERT OR REPLACE INTO ai_judgments (case_id, verdict, reason) VALUES (?, ?, ?)',
+      [case_id, verdictData.verdict, verdictData.reason],
+    );
+
+    res.status(200).json(verdictData);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+>>>>>>> 7d8503b6bb9a2b09051cbd5c45b4afe2b32536c8
     console.error('❌ AI Judge Error:', error);
     res.status(500).json({ message: 'Internal error' });
   }
