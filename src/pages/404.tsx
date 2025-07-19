@@ -7,7 +7,8 @@ import Seo from '@/components/Seo';
 
 export default function NotFoundPage() {
   return (
-    <Layout>
+    // eslint-disable-next-line react/jsx-curly-brace-presence
+    <Layout locale={''}>
       <Seo templateTitle='Not Found' />
 
       <main>
