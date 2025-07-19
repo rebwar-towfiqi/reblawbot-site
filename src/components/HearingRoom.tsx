@@ -11,6 +11,7 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
+import { motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
@@ -22,7 +23,7 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
-  Title,
+  Title
 );
 
 type CaseData = {
@@ -35,6 +36,11 @@ type StatsData = {
   defender: number;
 };
 
+type AIVerdict = {
+  verdict: string;
+  reason: string;
+};
+
 export default function HearingRoomPage() {
   const params = useSearchParams();
   const caseId = params?.get('caseId');
@@ -44,6 +50,8 @@ export default function HearingRoomPage() {
   const [argument, setArgument] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
+  const [aiVerdict, setAiVerdict] = useState<AIVerdict | null>(null);
+  const [judging, setJudging] = useState(false);
 
   useEffect(() => {
     if (!caseId) return;
@@ -54,10 +62,10 @@ export default function HearingRoomPage() {
           axios.get(`/api/case/${caseId}`),
           axios.get(`/api/argument/stats/${caseId}`),
         ]);
-        setCaseData(caseRes.data as CaseData);
-        setStats(statRes.data as StatsData);
+        setCaseData(caseRes.data);
+        setStats(statRes.data);
       } catch {
-        // Ignored for ESLint
+        // silent fail
       } finally {
         setLoading(false);
       }
@@ -79,21 +87,40 @@ export default function HearingRoomPage() {
       });
       setSubmitted(true);
       const res = await axios.get(`/api/argument/stats/${caseId}`);
-      setStats(res.data as StatsData);
+      setStats(res.data);
     } catch {
       alert('❌ خطا در ارسال اطلاعات.');
     }
   };
 
+  const handleJudge = async () => {
+    setJudging(true);
+    try {
+      const res = await axios.post('/api/ai-judge', { case_id: caseId });
+      setAiVerdict(res.data);
+    } catch {
+      alert('❌ خطا در دریافت رأی قاضی');
+    } finally {
+      setJudging(false);
+    }
+  };
+
   if (loading)
-    return <div className='p-6 text-center'>⏳ در حال بارگذاری...</div>;
+    return (
+      <div className='p-6 text-center text-blue-600 animate-pulse'>⏳ در حال بارگذاری پرونده...</div>
+    );
+
   if (!caseData)
-    return <div className='p-6 text-center'>❌ پرونده‌ای یافت نشد.</div>;
+    return <div className='p-6 text-center text-red-500'>❌ پرونده‌ای یافت نشد.</div>;
 
   return (
-    <div className='min-h-screen bg-gray-100 text-gray-900 p-6 flex flex-col items-center gap-6'>
-      <div className='bg-white p-6 rounded-xl w-full max-w-3xl shadow'>
-        <h2 className='text-2xl font-bold mb-2'>{caseData.title}</h2>
+    <div className='min-h-screen bg-gradient-to-b from-gray-50 to-gray-200 text-gray-900 p-6 flex flex-col items-center gap-6'>
+      <motion.div
+        className='bg-white p-6 rounded-xl w-full max-w-3xl shadow-md'
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <h2 className='text-2xl font-bold mb-2 text-blue-700'>{caseData.title}</h2>
         <p className='text-md text-gray-600 leading-relaxed mb-4'>
           {caseData.summary?.slice(0, 300)}...
         </p>
@@ -105,12 +132,15 @@ export default function HearingRoomPage() {
         >
           🤖 مشاهده پرونده در بات تلگرام
         </a>
-      </div>
+      </motion.div>
 
-      <div className='bg-white p-4 rounded-xl w-full max-w-2xl shadow'>
-        <h3 className='text-center font-bold mb-2'>
-          📊 نمودار دایره‌ای رأی کاربران
-        </h3>
+      <motion.div
+        className='bg-white p-4 rounded-xl w-full max-w-2xl shadow'
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
+        <h3 className='text-center font-bold mb-2 text-gray-700'>📊 نمودار دایره‌ای رأی کاربران</h3>
         <Pie
           data={{
             labels: ['گناهکار', 'بی‌گناه'],
@@ -122,10 +152,15 @@ export default function HearingRoomPage() {
             ],
           }}
         />
-      </div>
+      </motion.div>
 
-      <div className='bg-white p-4 rounded-xl w-full max-w-2xl shadow'>
-        <h3 className='text-center font-bold mb-2'>📈 نمودار ستونی آرا</h3>
+      <motion.div
+        className='bg-white p-4 rounded-xl w-full max-w-2xl shadow'
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+      >
+        <h3 className='text-center font-bold mb-2 text-gray-700'>📈 نمودار ستونی آرا</h3>
         <Bar
           data={{
             labels: ['شاکی', 'متهم'],
@@ -144,26 +179,29 @@ export default function HearingRoomPage() {
             },
           }}
         />
-      </div>
+      </motion.div>
 
       {!submitted && (
-        <div className='bg-white p-6 rounded-xl w-full max-w-3xl shadow space-y-4'>
-          <h3 className='text-xl font-bold text-gray-800'>
-            🧠 ثبت رأی و استدلال
-          </h3>
+        <motion.div
+          className='bg-white p-6 rounded-xl w-full max-w-3xl shadow space-y-4'
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.6 }}
+        >
+          <h3 className='text-xl font-bold text-gray-800'>🧠 ثبت رأی و استدلال</h3>
           <div className='flex gap-4'>
             <button
               onClick={() => setVote('plaintiff')}
-              className={`px-4 py-2 rounded ${
-                vote === 'plaintiff' ? 'bg-red-600 text-white' : 'bg-gray-200'
+              className={`px-4 py-2 rounded font-semibold transition-all duration-200 ${
+                vote === 'plaintiff' ? 'bg-red-600 text-white scale-105' : 'bg-gray-200'
               }`}
             >
               گناهکار
             </button>
             <button
               onClick={() => setVote('defender')}
-              className={`px-4 py-2 rounded ${
-                vote === 'defender' ? 'bg-green-600 text-white' : 'bg-gray-200'
+              className={`px-4 py-2 rounded font-semibold transition-all duration-200 ${
+                vote === 'defender' ? 'bg-green-600 text-white scale-105' : 'bg-gray-200'
               }`}
             >
               بی‌گناه
@@ -177,19 +215,51 @@ export default function HearingRoomPage() {
             className='w-full h-28 p-3 border rounded'
           />
 
-          <button
+          <motion.button
             onClick={handleSubmit}
-            className='bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700'
+            className='bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 shadow hover:scale-105 transition-all duration-200'
+            whileTap={{ scale: 0.95 }}
           >
             📬 ارسال
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       )}
 
-      {submitted && (
-        <div className='text-green-600 font-bold text-lg mt-4'>
-          ✅ رأی شما ثبت شد
-        </div>
+      {submitted && !aiVerdict && (
+        <motion.div
+          className='mt-6'
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <button
+            onClick={handleJudge}
+            className='bg-purple-600 text-white px-6 py-3 rounded shadow hover:bg-purple-700 transition-all'
+          >
+            ⚖️ مشاهده رأی قاضی هوشمند
+          </button>
+          {judging && (
+            <div className='text-sm text-gray-500 mt-2 animate-pulse'>⏳ در حال بررسی استدلال‌ها...</div>
+          )}
+        </motion.div>
+      )}
+
+      {aiVerdict && (
+        <motion.div
+          className='bg-white p-6 rounded-xl w-full max-w-2xl shadow mt-6 border-2 border-purple-400'
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <h3 className='text-xl font-bold text-purple-700 mb-2'>⚖️ رأی نهایی قاضی هوش مصنوعی</h3>
+          <p className='mb-1'>
+            <strong>نتیجه:</strong>{' '}
+            {aiVerdict.verdict === 'plaintiff'
+              ? '🔴 شاکی پیروز است'
+              : '🟢 متهم بی‌گناه است'}
+          </p>
+          <p className='text-gray-700'>
+            <strong>توجیه:</strong> {aiVerdict.reason}
+          </p>
+        </motion.div>
       )}
     </div>
   );
