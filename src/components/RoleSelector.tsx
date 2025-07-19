@@ -6,21 +6,8 @@ import React from 'react';
 
 const roles = [
   { id: 'plaintiff', label: '🧑‍💼 وکیل شاکی', color: 'from-red-500 to-red-700' },
-<<<<<<< HEAD
   { id: 'defender', label: '👨‍⚖️ وکیل متهم', color: 'from-green-500 to-green-700' },
   { id: 'judge', label: '⚖️ قاضی دادگاه', color: 'from-yellow-500 to-yellow-700' },
-=======
-  {
-    id: 'defender',
-    label: '👨‍⚖️ وکیل متهم',
-    color: 'from-green-500 to-green-700',
-  },
-  {
-    id: 'judge',
-    label: '⚖️ قاضی دادگاه',
-    color: 'from-yellow-500 to-yellow-700',
-  },
->>>>>>> 7d8503b6bb9a2b09051cbd5c45b4afe2b32536c8
 ];
 
 export default function RoleSelector() {
@@ -31,15 +18,9 @@ export default function RoleSelector() {
   };
 
   return (
-<<<<<<< HEAD
     <div className="flex flex-col items-center gap-10 mt-12">
       <motion.h2
         className="text-3xl font-extrabold text-blue-600 drop-shadow"
-=======
-    <div className='flex flex-col items-center gap-10 mt-12'>
-      <motion.h2
-        className='text-3xl font-extrabold text-blue-600 drop-shadow'
->>>>>>> 7d8503b6bb9a2b09051cbd5c45b4afe2b32536c8
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
@@ -47,11 +28,7 @@ export default function RoleSelector() {
         نقش خود را در دادگاه انتخاب کنید
       </motion.h2>
 
-<<<<<<< HEAD
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-=======
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
->>>>>>> 7d8503b6bb9a2b09051cbd5c45b4afe2b32536c8
         {roles.map((role, index) => (
           <motion.button
             key={role.id}
