@@ -1,8 +1,13 @@
+// app/[locale]/layout.tsx
 'use client'
 
 import { useEffect, useState } from 'react'
 
-export default function MyComponent({ locale }) {
+type Props = {
+  locale: string // ✅ هر مقدار رشته‌ای
+}
+
+export default function MyComponent({ locale }: Props) {
   const [messages, setMessages] = useState(null)
 
   useEffect(() => {
