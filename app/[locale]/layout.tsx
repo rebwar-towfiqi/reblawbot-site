@@ -1,30 +1,27 @@
-// app/[locale]/layout.tsx
-'use client'
+import { ReactNode } from 'react'
 
-import { useEffect, useState } from 'react'
+import { getMessages } from '@/lib/messages'
+
+import Providers from '@/components/Providers'
 
 type Props = {
-  locale: string // ✅ هر مقدار رشته‌ای
+  children: ReactNode
+  params: { locale: string }
 }
 
-export default function MyComponent({ locale }: Props) {
-  const [messages, setMessages] = useState(null)
-
-  useEffect(() => {
-    async function loadMessages() {
-      const response = await fetch(`/locales/${locale}.json`)
-      const data = await response.json()
-      setMessages(data)
-    }
-
-    loadMessages()
-  }, [locale])
-
-  if (!messages) return <div>Loading...</div>
+export default async function LocaleLayout({
+  children,
+  params: { locale },
+}: Props) {
+  const messages = await getMessages(locale)
 
   return (
-    <div>
-      <p>{messages}</p>
-    </div>
+    <html lang={locale}>
+      <body>
+        <Providers locale={locale} messages={messages}>
+          {children}
+        </Providers>
+      </body>
+    </html>
   )
 }
