@@ -1,11 +1,28 @@
+/* eslint-disable no-console */
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 import axios from 'axios';
-import { Bar, Pie } from 'react-chartjs-2';
-import { Chart, registerables } from 'chart.js';
-Chart.register(...registerables);
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Tooltip,
+} from 'chart.js';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { Bar,Pie } from 'react-chartjs-2';
+
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
+
+// تعریف تایپ پرونده برای جلوگیری از خطای TypeScript
+interface CaseData {
+  id: number;
+  title: string;
+  summary: string;
+}
 
 export default function HearingRoom() {
   const router = useRouter();
@@ -13,14 +30,14 @@ export default function HearingRoom() {
 
   const [argument, setArgument] = useState('');
   const [vote, setVote] = useState('');
+  const [caseData, setCaseData] = useState<CaseData | null>(null);
+  const [verdictStats, setVerdictStats] = useState<{ innocent: number; guilty: number; abstain: number } | null>(null);
   const [loading, setLoading] = useState(false);
-  const [caseData, setCaseData] = useState(null);
-  const [verdictStats, setVerdictStats] = useState({ guilty: 0, innocent: 0, abstain: 0 });
-  const [aiVerdict, setAiVerdict] = useState('');
+  const [aiVerdict, setAiVerdict] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!caseId) return;
     const fetchCase = async () => {
-      if (!caseId) return;
       try {
         const res = await axios.get(`/api/case/${caseId}`);
         setCaseData(res.data);
@@ -28,120 +45,134 @@ export default function HearingRoom() {
         console.error('❌ خطا در دریافت پرونده:', error);
       }
     };
-
-    const fetchStats = async () => {
-      try {
-        const res = await axios.get(`/api/verdict/stats/${caseId}`);
-        setVerdictStats(res.data);
-      } catch (error) {
-        console.error('❌ خطا در دریافت آمار رأی‌ها:', error);
-      }
-    };
-
     fetchCase();
-    fetchStats();
   }, [caseId]);
 
-  const handleSubmit = async () => {
+  const handleVote = async () => {
+    if (!vote || !telegram_id || !name) return alert('رأی و اطلاعات کاربری لازم است');
+    try {
+      await axios.post('/api/submit', {
+        caseId,
+        telegram_id,
+        name,
+        vote,
+        argument,
+      });
+      alert('✅ رأی شما ثبت شد!');
+    } catch (err) {
+      console.error('❌ خطا در ثبت رأی:', err);
+      alert('خطا در ثبت رأی');
+    }
+  };
+
+  const fetchStats = async () => {
+    try {
+      const res = await axios.get(`/api/verdict/stats/${caseId}`);
+      setVerdictStats(res.data);
+    } catch (err) {
+      console.error('❌ Error fetching verdict stats:', err);
+    }
+  };
+
+  const handleAIJudge = async () => {
     setLoading(true);
     try {
-      await axios.post('/api/verdict/submit', {
-        case_id: caseId,
-        user_id: telegram_id,
-        username: name,
-        role,
-        argument,
-        vote,
-      });
-      setArgument('');
-      setVote('');
-      alert('✅ رأی و استدلال شما ثبت شد.');
-    } catch (error) {
-      console.error('❌ خطا در ارسال:', error);
-      alert('❌ ارسال ناموفق بود.');
+      const res = await axios.get(`/api/verdict/ai/${caseId}`);
+      setAiVerdict(res.data.verdict);
+    } catch (err) {
+      console.error('❌ Error getting AI verdict:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAiJudge = async () => {
-    try {
-      const res = await axios.get(`/api/verdict/ai/${caseId}`);
-      setAiVerdict(res.data.verdict);
-    } catch (error) {
-      console.error('❌ خطا در رأی هوش مصنوعی:', error);
-    }
-  };
-
-  const chartData = {
-    labels: ['مجرم', 'بی‌گناه', 'ممتنع'],
-    datasets: [
-      {
-        label: 'آمار رأی کاربران',
-        data: [verdictStats.guilty, verdictStats.innocent, verdictStats.abstain],
-        backgroundColor: ['#dc2626', '#16a34a', '#facc15'],
-      },
-    ],
-  };
-
-  if (!caseData) return <p>⏳ در حال بارگذاری پرونده...</p>;
-
   return (
-    <div className="max-w-3xl mx-auto p-6 space-y-6">
+    <div className="p-6">
       <h1 className="text-2xl font-bold text-center text-blue-600">دادگاه - مرحله دفاع</h1>
-      <div className="bg-white p-4 rounded shadow">
-        <h2 className="text-lg font-bold mb-2">پرونده: {caseData.title}</h2>
-        <p className="text-gray-700 whitespace-pre-wrap">{caseData.summary}</p>
-      </div>
 
-      <div className="bg-white p-4 rounded shadow space-y-4">
-        <textarea
-          className="w-full h-24 border border-gray-300 p-2 rounded"
-          placeholder="استدلال حقوقی خود را وارد کنید..."
-          value={argument}
-          onChange={(e) => setArgument(e.target.value)}
-        />
+      {caseData && (
+        <div className="bg-white p-4 rounded shadow my-4">
+          <h2 className="text-lg font-bold mb-2">پرونده: {caseData.title}</h2>
+          <p className="text-gray-700 whitespace-pre-wrap">{caseData.summary}</p>
+        </div>
+      )}
+
+      <div className="my-6">
+        <label className="block mb-2 font-bold">رأی شما:</label>
         <select
-          className="w-full border border-gray-300 p-2 rounded"
           value={vote}
           onChange={(e) => setVote(e.target.value)}
+          className="border rounded w-full p-2"
         >
-          <option value="">انتخاب رأی...</option>
+          <option value="">انتخاب کنید</option>
+          <option value="innocent">برائت</option>
           <option value="guilty">مجرم</option>
-          <option value="innocent">بی‌گناه</option>
           <option value="abstain">ممتنع</option>
         </select>
-        <button
-          onClick={handleSubmit}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
-          disabled={loading}
-        >
-          {loading ? '⏳ در حال ارسال...' : 'ثبت رأی و استدلال'}
+      </div>
+
+      <div className="my-6">
+        <label className="block mb-2 font-bold">استدلال شما:</label>
+        <textarea
+          value={argument}
+          onChange={(e) => setArgument(e.target.value)}
+          className="border rounded w-full p-2"
+          rows={4}
+        />
+      </div>
+
+      <div className="flex gap-4 my-4">
+        <button onClick={handleVote} className="bg-blue-600 text-white px-6 py-2 rounded shadow">
+          ثبت رأی
+        </button>
+        <button onClick={fetchStats} className="bg-gray-500 text-white px-6 py-2 rounded shadow">
+          مشاهده آمار
+        </button>
+        <button onClick={handleAIJudge} disabled={loading} className="bg-purple-600 text-white px-6 py-2 rounded shadow">
+          {loading ? 'در حال پردازش...' : 'رأی قاضی هوش مصنوعی'}
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4 rounded shadow">
-        <div>
-          <h3 className="font-bold mb-2 text-center">نمودار دایره‌ای</h3>
-          <Pie data={chartData} />
+      {verdictStats && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+          <div>
+            <h3 className="font-bold mb-2">آمار رأی‌گیری (نمودار دایره‌ای):</h3>
+            <Pie
+              data={{
+                labels: ['برائت', 'مجرم', 'ممتنع'],
+                datasets: [
+                  {
+                    data: [verdictStats.innocent, verdictStats.guilty, verdictStats.abstain],
+                    backgroundColor: ['#22c55e', '#ef4444', '#eab308'],
+                  },
+                ],
+              }}
+            />
+          </div>
+          <div>
+            <h3 className="font-bold mb-2">آمار رأی‌گیری (نمودار میله‌ای):</h3>
+            <Bar
+              data={{
+                labels: ['برائت', 'مجرم', 'ممتنع'],
+                datasets: [
+                  {
+                    label: 'تعداد آرا',
+                    data: [verdictStats.innocent, verdictStats.guilty, verdictStats.abstain],
+                    backgroundColor: ['#22c55e', '#ef4444', '#eab308'],
+                  },
+                ],
+              }}
+            />
+          </div>
         </div>
-        <div>
-          <h3 className="font-bold mb-2 text-center">نمودار میله‌ای</h3>
-          <Bar data={chartData} />
-        </div>
-      </div>
+      )}
 
-      <div className="text-center mt-6">
-        <button
-          onClick={handleAiJudge}
-          className="bg-black hover:bg-gray-800 text-white font-bold py-2 px-6 rounded"
-        >
-          دریافت رأی قاضی هوش مصنوعی
-        </button>
-        {aiVerdict && (
-          <p className="mt-4 text-lg font-semibold text-green-600">🧠 رأی هوش مصنوعی: {aiVerdict}</p>
-        )}
-      </div>
+      {aiVerdict && (
+        <div className="bg-purple-100 p-4 rounded shadow mt-6">
+          <h3 className="font-bold text-purple-700">رأی نهایی قاضی هوش مصنوعی:</h3>
+          <p className="text-purple-800 mt-2">{aiVerdict}</p>
+        </div>
+      )}
     </div>
   );
 }
