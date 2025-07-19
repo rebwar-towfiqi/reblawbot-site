@@ -2,6 +2,7 @@
 
 'use client';
 
+import { GetStaticPropsContext } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -34,4 +35,12 @@ export default function Home() {
       </div>
     </>
   );
+}
+
+export async function getStaticProps({ locale }: GetStaticPropsContext) {
+  return {
+    props: {
+      messages: (await import(`../locales/${locale}/common.json`)).default,
+    },
+  };
 }
