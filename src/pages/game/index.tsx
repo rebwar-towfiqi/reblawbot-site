@@ -3,11 +3,12 @@
 'use client';
 
 import Head from 'next/head';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 
 export default function Home() {
-  // eslint-disable-next-line unused-imports/no-unused-vars
+
   const t = useTranslations('common');
 
   useEffect(() => {
@@ -26,12 +27,11 @@ export default function Home() {
         <p className="text-lg text-gray-600 max-w-xl mb-6">
           Experience justice through AI-powered legal debates. Choose a case, take a side, and let the community—and the AI judge—decide.
         </p>
-        <a
-          href="/game/case-selection"
-          className="bg-purple-600 hover:bg-purple-700 text-white text-lg font-medium px-6 py-3 rounded-xl shadow"
-        >
-          🎮 Start Legal Game
-        </a>
+        <Link href="/game/case-selection" passHref>
+          <span className="bg-purple-600 hover:bg-purple-700 text-white text-lg font-medium px-6 py-3 rounded-xl shadow inline-block cursor-pointer">
+            🎮 Start Legal Game
+          </span>
+        </Link>
       </div>
     </>
   );
