@@ -2,33 +2,35 @@
 
 import { createContext, ReactNode,useContext, useState } from 'react';
 
-export type Character = {
-  id: string;
-  name: string;
-  image: string;
-};
-
+// نوع کانتکست
 type CharacterContextType = {
-  character: Character | null;
-  setCharacter: (character: Character) => void;
+  selectedCharacter: string | null;
+  selectCharacter: (id: string) => void;
 };
 
+// ایجاد کانتکست با مقدار اولیه
 const CharacterContext = createContext<CharacterContextType | undefined>(undefined);
 
+// پراوایدر کانتکست
 export const CharacterProvider = ({ children }: { children: ReactNode }) => {
-  const [character, setCharacter] = useState<Character | null>(null);
+  const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
+
+  const selectCharacter = (id: string) => {
+    setSelectedCharacter(id);
+  };
 
   return (
-    <CharacterContext.Provider value={{ character, setCharacter }}>
+    <CharacterContext.Provider value={{ selectedCharacter, selectCharacter }}>
       {children}
     </CharacterContext.Provider>
   );
 };
 
-export const useCharacter = () => {
+// هوک شخصی‌سازی‌شده برای استفاده از کانتکست
+export const useCharacter = (): CharacterContextType => {
   const context = useContext(CharacterContext);
   if (!context) {
-    throw new Error('useCharacter باید داخل CharacterProvider استفاده شود');
+    throw new Error('useCharacter must be used within a CharacterProvider');
   }
   return context;
 };
