@@ -1,174 +1,129 @@
-/* eslint-disable unused-imports/no-unused-vars */
+
 /* eslint-disable no-console */
-'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// 📄 File: src/pages/game/hearing-room.tsx
 
 import axios from 'axios';
-import {
-  ArcElement,
-  BarElement,
-  CategoryScale,
-  Chart as ChartJS,
-  Legend,
-  LinearScale,
-  Tooltip,
-} from 'chart.js';
+import Chart from 'chart.js/auto';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { Pie } from 'react-chartjs-2';
 
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-
-ChartJS.register(
-  ArcElement,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-);
-
-// ✅ تعریف نوع اطلاعات پرونده
-type CaseData = {
-  title: string;
-  summary: string;
-};
-
-// ✅ تعریف نوع آرای رأی‌دهندگان
-type VoteStats = {
-  plaintiff: number;
-  defendant: number;
-  abstain: number;
-};
 
 export default function HearingRoom() {
   const router = useRouter();
-  const { case: caseId, role } = router.query;
+  const { case: caseId, role, telegram_id, name } = router.query;
+  const [caseData, setCaseData] = useState<any>(null);
+  const [argument, setArgument] = useState('');
+  const [vote, setVote] = useState('');
+  const [aiVerdict, setAiVerdict] = useState('');
+  const [verdictStats, setVerdictStats] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
 
-  const [caseData, setCaseData] = useState<CaseData | null>(null);
-  const [message, setMessage] = useState<string>('');
-  const [argument, setArgument] = useState<string>('');
-  const [votes, setVotes] = useState<VoteStats>({
-    plaintiff: 0,
-    defendant: 0,
-    abstain: 0,
-  });
-  const [selectedVote, setSelectedVote] = useState<
-    'plaintiff' | 'defendant' | 'abstain' | null
-  >(null);
 
-  // 📥 بارگذاری پرونده و آمار آرا
   useEffect(() => {
-    if (caseId) {
-      axios
-        .get(`/api/case/${caseId}`)
-        .then((res) => setCaseData(res.data))
-        .catch(() => setMessage('❌ خطا در بارگذاری پرونده.'));
-
-      axios
-        .get(`/api/argument/stats/${caseId}`)
-        .then((res) => setVotes(res.data))
-        .catch(() => console.error('❌ خطا در بارگذاری آمار آرا'));
-    }
+    if (!caseId) return;
+    axios.get(`/api/case/${caseId}`).then(res => setCaseData(res.data)).catch(console.error);
+    axios.get(`/api/verdict/stats/${caseId}`).then(res => setVerdictStats(res.data)).catch(() => {});
+    axios.get(`/api/verdict/ai/${caseId}`).then(res => setAiVerdict(res.data?.verdict || '')).catch(() => {});
   }, [caseId]);
 
-  // 📤 ارسال رأی و استدلال
-  const handleSubmitArgument = async () => {
-    if (!selectedVote || !argument.trim()) {
-      alert('لطفاً هم رأی و هم استدلال را وارد کنید.');
-      return;
-    }
+  useEffect(() => {
+    if (!verdictStats) return;
+    const ctxPie = document.getElementById('verdictPie') as HTMLCanvasElement;
+    const ctxBar = document.getElementById('verdictBar') as HTMLCanvasElement;
+    new Chart(ctxPie, {
+      type: 'pie',
+      data: {
+        labels: ['Innocent', 'Guilty', 'Abstain'],
+        datasets: [{
+          label: 'Votes',
+          data: [verdictStats.innocent, verdictStats.guilty, verdictStats.abstain],
+        }]
+      },
+    });
+    new Chart(ctxBar, {
+      type: 'bar',
+      data: {
+        labels: ['Innocent', 'Guilty', 'Abstain'],
+        datasets: [{
+          label: 'Votes',
+          data: [verdictStats.innocent, verdictStats.guilty, verdictStats.abstain],
+        }]
+      },
+    });
+  }, [verdictStats]);
 
+  const submitArgument = async () => {
+    if (!argument || !vote) return;
+    setLoading(true);
     try {
       await axios.post('/api/argument', {
+        telegram_id,
+        name,
         case_id: caseId,
-        vote: selectedVote,
+        role,
+        vote,
         argument,
       });
-
-      alert('✅ رأی و استدلال شما با موفقیت ثبت شد.');
-      setArgument('');
-      setSelectedVote(null);
-
-      const res = await axios.get(`/api/argument/stats/${caseId}`);
-      setVotes(res.data);
-    } catch (err) {
-      console.error('❌ خطا در ارسال:', err);
-      alert('⚠️ خطا در ثبت استدلال. لطفاً دوباره تلاش کنید.');
+      alert('✅ Argument submitted!');
+    } catch (e) {
+      alert('❌ Submission failed.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const chartData = {
-    labels: ['مجرم', 'برائت', 'ممتنع'],
-    datasets: [
-      {
-        data: [votes.plaintiff, votes.defendant, votes.abstain],
-        backgroundColor: ['#ef4444', '#22c55e', '#d1d5db'],
-      },
-    ],
-  };
+  if (!caseData) return <p>Loading case data...</p>;
 
   return (
-    <div className='max-w-2xl mx-auto p-4'>
-      <h2 className='text-2xl font-bold mb-4'>🧾 پرونده انتخابی</h2>
-      {message && <p className='text-red-500'>{message}</p>}
+    <div className="p-6 max-w-3xl mx-auto space-y-6">
+      <h1 className="text-2xl font-bold">{caseData.title}</h1>
+      <p className="text-gray-600">{caseData.description}</p>
+      <a href={caseData.link} target="_blank" className="text-blue-600 underline">Read full case</a>
 
-      {!message && caseData && (
-        <>
-          <h3 className='text-xl font-semibold mb-2'>{caseData.title}</h3>
-          <p className='mb-2'>{caseData.summary.slice(0, 300)}...</p>
-          <a
-            href={`https://t.me/RebLCBot?start=${caseId}`}
-            className='text-blue-600 underline'
-          >
-            👁 مشاهدهٔ کامل در ربات رسمی
-          </a>
+      <div className="mt-6">
+        <label htmlFor="vote">Your Vote:</label>
+        <select
+          id="vote"
+          value={vote}
+          onChange={e => setVote(e.target.value)}
+          className="border rounded p-2 ml-2"
+        >
+          <option value="">--Select--</option>
+          <option value="innocent">Innocent</option>
+          <option value="guilty">Guilty</option>
+          <option value="abstain">Abstain</option>
+        </select>
+      </div>
 
-          <div className='mt-6 space-y-4'>
-            <h4 className='text-lg font-bold'>✊ رأی شما چیست؟</h4>
-            <div className='flex gap-2'>
-              <Button
-                onClick={() => setSelectedVote('defendant')}
-                variant={selectedVote === 'defendant' ? 'default' : 'outline'}
-              >
-                🟢 برائت
-              </Button>
-              <Button
-                onClick={() => setSelectedVote('plaintiff')}
-                variant={selectedVote === 'plaintiff' ? 'default' : 'outline'}
-              >
-                🔴 مجرم
-              </Button>
-              <Button
-                onClick={() => setSelectedVote('abstain')}
-                variant={selectedVote === 'abstain' ? 'default' : 'outline'}
-              >
-                ⚖ ممتنع
-              </Button>
-            </div>
-          </div>
+      <textarea
+        placeholder="Enter your argument here..."
+        value={argument}
+        onChange={e => setArgument(e.target.value)}
+        className="w-full border p-3 rounded mt-4"
+        rows={4}
+      />
 
-          <div className='mt-6'>
-            <h4 className='text-lg font-bold mb-2'>📊 نمودار آرا</h4>
-            <div className='w-48 h-48 mx-auto'>
-              <Pie data={chartData} />
-            </div>
-          </div>
+      <button
+        onClick={submitArgument}
+        className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
+        disabled={loading}
+      >
+        Submit Argument
+      </button>
 
-          <div className='mt-6'>
-            <h4 className='text-lg font-bold mb-2'>📝 استدلال شما:</h4>
-            <Textarea
-              placeholder='استدلال خود را وارد کنید...'
-              value={argument}
-              onChange={(e) => setArgument(e.target.value)}
-              className='min-h-[100px]'
-            />
-            <Button onClick={handleSubmitArgument} className='mt-2'>
-              📤 ارسال استدلال
-            </Button>
-          </div>
-        </>
+      {aiVerdict && (
+        <div className="bg-green-100 border border-green-300 p-4 rounded mt-6">
+          <h2 className="font-semibold">🧠 AI Judge Verdict:</h2>
+          <p>{aiVerdict}</p>
+        </div>
       )}
+
+      <div className="mt-6">
+        <h3 className="font-bold mb-2">Community Votes</h3>
+        <canvas id="verdictPie" className="mb-4" height="200"></canvas>
+        <canvas id="verdictBar" height="200"></canvas>
+      </div>
     </div>
   );
 }
