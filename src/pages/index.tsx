@@ -1,54 +1,56 @@
+/* eslint-disable unused-imports/no-unused-vars */
+
+// src/pages/index.tsx
 'use client';
 
-import { motion } from 'framer-motion';
+import { GetStaticPropsContext } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useTranslations } from 'next-intl';
+import { useEffect } from 'react';
 
+type Props = {
+  messages: Record<string, string>;
+};
 
 export default function Home() {
- 
+  const t = useTranslations('common');
+  const router = useRouter();
+
+  useEffect(() => {
+    document.body.style.background = 'linear-gradient(to bottom, #f8fafc, #ffffff)';
+    return () => {
+      document.body.style.background = '';
+    };
+  }, []);
+
   return (
     <>
       <Head>
-        <title>بازی حقوقی - شروع</title>
+        <title>{t('home_title')}</title>
+        <meta name="description" content={t('home_description')} />
       </Head>
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-slate-100 to-white">
-        <motion.h1
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-4xl md:text-5xl font-extrabold text-blue-700 drop-shadow mb-6 text-center"
+      <main className="flex flex-col items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+        <h1 className="text-4xl font-extrabold text-blue-600 mb-8 drop-shadow">
+          ⚖️ {t('welcome')}
+        </h1>
+        <Link
+          href="/game/role-selector"
+          className="bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg transition-all duration-300 text-xl"
         >
-          به بازی دادگاه هوشمند خوش آمدید
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.8 }}
-          className="text-lg md:text-xl text-gray-700 text-center max-w-xl px-6"
-        >
-          در این بازی، شما نقش یک وکیل حرفه‌ای را بازی می‌کنید، باید معماهای حقوقی را حل کرده و رأی قاضی هوش مصنوعی را جلب کنید.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 1.2, duration: 0.5 }}
-          className="mt-12"
-        >
-          <Link href="/game/character-select">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition duration-300">
-              🎮 شروع بازی
-            </button>
-          </Link>
-        </motion.div>
-      </div>
+          {t('start_game')}
+        </Link>
+      </main>
     </>
   );
 }
 
-
-
-
-
+export async function getStaticProps({ locale }: GetStaticPropsContext) {
+  const messages = (await import(`../../public/locales/${locale}/common.json`)).default;
+  return {
+    props: {
+      messages,
+    },
+  };
+}
