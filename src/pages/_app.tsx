@@ -2,18 +2,22 @@
 
 import type { AppProps } from 'next/app';
 import { NextIntlClientProvider } from 'next-intl';
+import { useEffect } from 'react';
 
 import '@/styles/globals.css';
 
-import { CharacterProvider } from '@/context/CharacterContext';
+export default function App({ Component, pageProps }: AppProps) {
+  // تنظیم رنگ پس‌زمینه برای کل سایت
+  useEffect(() => {
+    document.body.style.background = 'linear-gradient(to bottom, #f0f4f8, #ffffff)';
+  }, []);
 
-export default function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <NextIntlClientProvider messages={pageProps.messages || {}}>
-      <CharacterProvider>
-        <Component {...pageProps} />
-      </CharacterProvider>
+    <NextIntlClientProvider
+      locale={pageProps.locale} // ⬅️ مقدار locale به صورت صریح ارسال می‌شود
+      messages={pageProps.messages || {}}
+    >
+      <Component {...pageProps} />
     </NextIntlClientProvider>
   );
 }
-
