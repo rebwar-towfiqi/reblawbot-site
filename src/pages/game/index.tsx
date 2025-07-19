@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 
 export default function GameHome() {
-
   useEffect(() => {
     document.body.style.background = 'linear-gradient(to bottom, #f0f4ff, #ffffff)';
   }, []);
@@ -25,10 +24,10 @@ export default function GameHome() {
         <p className="text-lg text-gray-600 max-w-xl mb-6">
           Step into the courtroom, pick your role, and argue your case in front of a global audience and our AI judge.
         </p>
-        <Link href="/game/case-selection" passHref>
-          <span className="bg-indigo-600 hover:bg-indigo-700 text-white text-lg font-medium px-6 py-3 rounded-xl shadow-lg cursor-pointer">
+        <Link href="/game/case-selection" passHref legacyBehavior>
+          <a className="bg-indigo-600 hover:bg-indigo-700 text-white text-lg font-medium px-6 py-3 rounded-xl shadow-lg cursor-pointer">
             🎮 Choose a Legal Case
-          </span>
+          </a>
         </Link>
       </div>
     </>
