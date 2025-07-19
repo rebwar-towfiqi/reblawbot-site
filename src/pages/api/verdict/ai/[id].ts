@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // 📄 File: src/pages/api/verdict/stats/[id].ts
 
 import Database from 'better-sqlite3';
