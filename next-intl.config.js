@@ -4,6 +4,7 @@ const i18nConfig = {
   timeZone: 'Asia/Tehran',
 };
 
-export default i18nConfig;
+module.exports = i18nConfig;
+
 
 
