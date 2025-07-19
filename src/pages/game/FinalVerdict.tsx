@@ -1,3 +1,6 @@
+/* eslint-disable no-console */
+// 📄 File: src/pages/game/final-verdict.tsx
+
 'use client';
 
 import axios from 'axios';
@@ -5,15 +8,12 @@ import { motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-type AIVerdict = {
-  verdict: string;
-  reason: string;
-};
+
 
 export default function FinalVerdict() {
   const params = useSearchParams();
   const caseId = params?.get('caseId');
-  const [verdict, setVerdict] = useState<AIVerdict | null>(null);
+  const [verdict, setVerdict] = useState<string>('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,10 +21,10 @@ export default function FinalVerdict() {
 
     const fetchVerdict = async () => {
       try {
-        const res = await axios.post('/api/ai-judge', { case_id: caseId });
-        setVerdict(res.data);
-      } catch {
-        setVerdict(null);
+        const res = await axios.get(`/api/verdict/ai/${caseId}`);
+        setVerdict(res.data?.verdict || '');
+      } catch (e) {
+        console.error('Error loading AI verdict:', e);
       } finally {
         setLoading(false);
       }
@@ -62,12 +62,11 @@ export default function FinalVerdict() {
         </h2>
         <p className='text-lg font-semibold text-center mb-2'>
           نتیجه:{' '}
-          {verdict.verdict === 'plaintiff'
+          {verdict === 'plaintiff'
             ? '🔴 شاکی پیروز است'
-            : '🟢 متهم بی‌گناه است'}
-        </p>
-        <p className='text-gray-700 leading-relaxed text-justify'>
-          <strong>دلیل قاضی:</strong> {verdict.reason}
+            : verdict === 'defendant'
+            ? '🟢 متهم بی‌گناه است'
+            : verdict}
         </p>
       </motion.div>
     </div>
