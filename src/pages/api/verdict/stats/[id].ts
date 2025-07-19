@@ -34,6 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     res.status(200).json(stats);
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('❌ Error fetching verdict stats:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
