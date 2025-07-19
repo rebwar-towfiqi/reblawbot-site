@@ -1,30 +1,15 @@
-// app/[locale]/layout.tsx
-'use client'
-
-import { useEffect, useState } from 'react'
+// components/layout/Layout.tsx
+import { ReactNode } from 'react';
 
 type Props = {
-  locale: string // ✅ هر مقدار رشته‌ای
-}
+  locale: string;
+  children: ReactNode;
+};
 
-export default function MyComponent({ locale }: Props) {
-  const [messages, setMessages] = useState(null)
-
-  useEffect(() => {
-    async function loadMessages() {
-      const response = await fetch(`/locales/${locale}.json`)
-      const data = await response.json()
-      setMessages(data)
-    }
-
-    loadMessages()
-  }, [locale])
-
-  if (!messages) return <div>Loading...</div>
-
+export default function Layout({ locale, children }: Props) {
   return (
-    <div>
-      <p>{messages}</p>
-    </div>
-  )
+    <html lang={locale}>
+      <body>{children}</body>
+    </html>
+  );
 }
