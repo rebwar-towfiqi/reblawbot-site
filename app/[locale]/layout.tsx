@@ -1,34 +1,25 @@
-// app/[locale]/layout.tsx
-import { notFound } from 'next/navigation';
-import { NextIntlClientProvider } from 'next-intl';
-import { ReactNode } from 'react';
+'use client'
 
-import { getMessages } from '@/lib/messages';
+import { useEffect, useState } from 'react'
 
-import { locales } from '@/i18n';
+export default function MyComponent({ locale }) {
+  const [messages, setMessages] = useState(null)
 
-type Props = {
-  children: ReactNode;
-  params: { locale: (typeof locales)[number] };
-};
+  useEffect(() => {
+    async function loadMessages() {
+      const response = await fetch(`/locales/${locale}.json`)
+      const data = await response.json()
+      setMessages(data)
+    }
 
-export default async function LocaleLayout({
-  children,
-  params: { locale },
-}: Props) {
-  if (!locales.includes(locale)) {
-    notFound();
-  }
+    loadMessages()
+  }, [locale])
 
-  const messages = await getMessages(locale);
+  if (!messages) return <div>Loading...</div>
 
   return (
-    <html lang={locale}>
-      <body>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
-        </NextIntlClientProvider>
-      </body>
-    </html>
-  );
+    <div>
+      <p>{messages.welcome}</p>
+    </div>
+  )
 }
