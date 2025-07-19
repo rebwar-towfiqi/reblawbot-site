@@ -24,7 +24,7 @@ export default function MyComponent({ locale }: Props) {
 
   return (
     <div>
-      <p>{messages.welcome}</p>
+      <p>{messages}</p>
     </div>
   )
 }
