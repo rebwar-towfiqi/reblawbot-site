@@ -1,7 +1,9 @@
-const config = {
-  locales: ['fa', 'en', 'ku'],
-  defaultLocale: 'fa',
-  timeZone: 'UTC', // یا هر منطقه زمانی مناسب دیگر
+const i18nConfig = {
+  locales: ['en', 'fa', 'ku'],
+  defaultLocale: 'en',
+  timeZone: 'UTC',
 };
 
-export default config;
+export default i18nConfig;
+
+
