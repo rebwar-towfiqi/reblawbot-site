@@ -3,9 +3,31 @@
 'use client';
 
 import axios from 'axios';
-import { Chart } from 'chart.js/auto';
+// 👇 Register chart types manually
+import {
+  ArcElement,
+  BarController,
+  BarElement,
+  CategoryScale,
+  Chart,
+  Legend,
+  LinearScale,
+  PieController,
+  Tooltip,
+} from 'chart.js';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
+
+Chart.register(
+  BarController,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  PieController,
+  ArcElement,
+  Tooltip,
+  Legend
+);
 
 export default function HearingRoom() {
   const router = useRouter();
@@ -27,7 +49,6 @@ export default function HearingRoom() {
         const res = await axios.get(`/api/verdict/stats/${caseId}`);
         setStats(res.data);
       } catch (error) {
-        // eslint-disable-next-line no-console
         console.error('❌ Failed to fetch stats:', error);
       }
     };
@@ -38,7 +59,6 @@ export default function HearingRoom() {
   useEffect(() => {
     if (!stats) return;
 
-    // Pie Chart setup
     const pieCtx = pieChartRef.current?.getContext('2d');
     if (pieCtx) {
       pieChartInstanceRef.current?.destroy();
@@ -48,7 +68,6 @@ export default function HearingRoom() {
           labels: ['Innocent', 'Guilty', 'Abstain'],
           datasets: [
             {
-              label: 'Verdict Distribution',
               data: [stats.innocent, stats.guilty, stats.abstain],
               backgroundColor: ['#22c55e', '#ef4444', '#eab308'],
             },
@@ -57,15 +76,12 @@ export default function HearingRoom() {
         options: {
           responsive: true,
           plugins: {
-            legend: {
-              position: 'bottom',
-            },
+            legend: { position: 'bottom' },
           },
         },
       });
     }
 
-    // Bar Chart setup
     const barCtx = barChartRef.current?.getContext('2d');
     if (barCtx) {
       barChartInstanceRef.current?.destroy();
@@ -75,7 +91,7 @@ export default function HearingRoom() {
           labels: ['Innocent', 'Guilty', 'Abstain'],
           datasets: [
             {
-              label: 'Number of Votes',
+              label: 'Votes',
               data: [stats.innocent, stats.guilty, stats.abstain],
               backgroundColor: ['#22c55e', '#ef4444', '#eab308'],
             },
@@ -97,7 +113,6 @@ export default function HearingRoom() {
   return (
     <div className="p-6 space-y-10">
       <h2 className="text-2xl font-bold text-center text-gray-800">📊 Verdict Statistics</h2>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="w-full h-72">
           <canvas ref={pieChartRef} />
