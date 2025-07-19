@@ -1,20 +1,19 @@
-// 📄 File: src/pages/_app.tsx
+'use client';
 
 import type { AppProps } from 'next/app';
-import { IntlProvider } from 'next-intl';
+import { NextIntlClientProvider } from 'next-intl';
+
+import '@/styles/globals.css';
+
+import { CharacterProvider } from '@/context/CharacterContext';
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <IntlProvider
-      messages={pageProps.messages}
-      locale={pageProps.locale ?? 'en'} // جلوگیری از undefined
-      timeZone="Asia/Tehran"
-    >
-      <Component {...pageProps} />
-    
-    </IntlProvider>
+    <NextIntlClientProvider messages={pageProps.messages || {}}>
+      <CharacterProvider>
+        <Component {...pageProps} />
+      </CharacterProvider>
+    </NextIntlClientProvider>
   );
 }
-
-
 
