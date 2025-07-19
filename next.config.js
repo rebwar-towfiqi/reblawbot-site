@@ -1,25 +1,26 @@
 // next.config.js
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const path = require('path');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const i18nConfig = require('./next-intl.config.js');
+import { resolve } from 'path';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
 
-  i18n: i18nConfig,
+  i18n: {
+    locales: ['en', 'fa', 'ku'],
+    defaultLocale: 'en',
+    localeDetection: true,
+  },
 
   webpack(config) {
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@': path.resolve(__dirname, 'src'),
-      '@locales': path.resolve(__dirname, 'src/locales'),
-      '~': path.resolve(__dirname, 'public'),
+      '@': resolve(__dirname, 'src'),
+      '@locales': resolve(__dirname, 'src/locales'),
+      '~': resolve(__dirname, 'public'),
     };
     return config;
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
