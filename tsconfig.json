@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["dom", "dom.iterable", "ES2018.AsyncIterable", "esnext"]
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -21,7 +21,9 @@
       "@lib/*": ["./src/lib/*"],
       "@i18n/*": ["./src/i18n/*"],
       "@styles/*": ["./src/styles/*"],
-      "@locales/*": ["./src/locales/*"]
+      "@locales/*": ["./public/locales/*"],
+      "@sounds/*": ["./public/sounds/*"],
+      "@images/*": ["./public/images/*"]
     },
     "plugins": [
       {
@@ -29,6 +31,11 @@
       }
     ]
   },
-  "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", ".next/types/**/*.ts"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "next-env.d.ts",
+    ".next/types/**/*.ts"
+  ],
   "exclude": ["node_modules"]
 }
