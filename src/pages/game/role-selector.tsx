@@ -1,53 +1,67 @@
-// 📄 File: src/pages/game/role-selector.tsx
+'use client'
 
-import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { motion } from 'framer-motion'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
 
 export default function RoleSelector() {
-  const router = useRouter();
-  const { case: caseId } = router.query;
-  const [name, setName] = useState('');
-  const [telegramId, setTelegramId] = useState('');
+  const router = useRouter()
+  const { case: caseId } = router.query
+  const [name, setName] = useState('')
+  const [telegramId, setTelegramId] = useState('')
 
   const handleSelect = (role: string) => {
-    if (!name || !telegramId) return alert('Please enter your name and Telegram ID.');
-    router.push(`/game/hearing-room?case=${caseId}&role=${role}&name=${name}&telegram_id=${telegramId}`);
-  };
+    if (!name.trim() || !telegramId.trim()) {
+      alert('لطفاً نام و آیدی تلگرام را وارد کنید.')
+      return
+    }
+
+    router.push(
+      `/game/hearing-room?case=${caseId}&role=${role}&name=${name}&telegram_id=${telegramId}`
+    )
+  }
 
   return (
-    <div className="max-w-xl mx-auto p-6 space-y-4">
-      <h1 className="text-xl font-bold">Choose Your Role</h1>
+    <motion.div
+      className="max-w-xl mx-auto p-6 mt-10 space-y-6 bg-white shadow-xl rounded-2xl border border-gray-300"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <h1 className="text-2xl font-bold text-center text-gray-800">
+        🎭 انتخاب نقش حقوقی
+      </h1>
 
       <input
         type="text"
-        placeholder="Your Name"
+        placeholder="نام شما"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className="w-full border p-2 rounded"
+        className="w-full border p-3 rounded-xl text-lg focus:ring-2 focus:ring-blue-500"
       />
 
       <input
         type="text"
-        placeholder="Telegram ID (e.g. 12345678)"
+        placeholder="آیدی تلگرام (مثلاً: 123456789)"
         value={telegramId}
         onChange={(e) => setTelegramId(e.target.value)}
-        className="w-full border p-2 rounded"
+        className="w-full border p-3 rounded-xl text-lg focus:ring-2 focus:ring-blue-500"
       />
 
       <div className="flex justify-around mt-4">
         <button
           onClick={() => handleSelect('plaintiff')}
-          className="bg-green-600 text-white px-4 py-2 rounded"
+          className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl transition"
         >
-          Plaintiff
+          🔴 شاکی
         </button>
         <button
           onClick={() => handleSelect('defendant')}
-          className="bg-red-600 text-white px-4 py-2 rounded"
+          className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl transition"
         >
-          Defendant
+          🟢 متهم
         </button>
       </div>
-    </div>
-  );
+    </motion.div>
+  )
 }
