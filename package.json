@@ -54,7 +54,7 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/chart.js": "^2.9.41",
     "@types/jest": "^30.0.0",
-    "@types/node": "20.11.30",
+    "@types/node": "^20.11.30",
     "@types/react": "18.2.65",
     "@types/react-dom": "18.2.21",
     "@types/react-router-dom": "^5.3.3",
@@ -73,7 +73,7 @@
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.3",
-    "typescript": "^5.4.5"
+    "typescript": "^5.8.3"
   },
   "engines": {
     "node": ">=18.14.0"
