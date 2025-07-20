@@ -1,18 +1,18 @@
-/* eslint-disable no-console */
-import path from 'path';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+import { join } from 'path';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 import { open } from 'sqlite';
-import sqlite3 from 'sqlite3';
+import { Database } from 'sqlite3';
 
-// مسیر پایگاه داده
-const dbPath = path.join(__dirname, '../src/data/game_cases.db');
+const dbPath = join(__dirname, '../src/data/game_cases.db');
 
 async function initAllTables() {
   const db = await open({
     filename: dbPath,
-    driver: sqlite3.Database
+    driver: Database
   });
 
-  // ایجاد جدول رأی‌ها
+  // votes table
   await db.exec(`
     CREATE TABLE IF NOT EXISTS votes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,9 +23,9 @@ async function initAllTables() {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `);
-  console.log('✅ جدول votes ساخته شد.');
+  console.log('✅ votes table created');
 
-  // ایجاد جدول آراء هوش مصنوعی
+  // verdicts table
   await db.exec(`
     CREATE TABLE IF NOT EXISTS verdicts (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,9 +35,9 @@ async function initAllTables() {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `);
-  console.log('✅ جدول verdicts ساخته شد.');
+  console.log('✅ verdicts table created');
 
-  // ایجاد جدول سشن‌ها (دادگاه مجازی)
+  // game_sessions table
   await db.exec(`
     CREATE TABLE IF NOT EXISTS game_sessions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -48,13 +48,12 @@ async function initAllTables() {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `);
-  console.log('✅ جدول game_sessions ساخته شد.');
+  console.log('✅ game_sessions table created');
 
   await db.close();
-  console.log('🎉 همه جداول با موفقیت ایجاد شدند.');
+  console.log('🎉 All tables created successfully');
 }
 
-initAllTables().catch((err) => {
-  // eslint-disable-next-line no-console
-  console.error('❌ خطا در ساخت جداول:', err);
+initAllTables().catch(err => {
+  console.error('❌ Error creating tables:', err);
 });
