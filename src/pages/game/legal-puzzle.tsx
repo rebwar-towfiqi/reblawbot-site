@@ -29,6 +29,7 @@ export default function LegalPuzzlePage() {
         const res = await axios.get(`/api/puzzle/${caseId}`)
         setPuzzle(res.data)
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('❌ خطا در دریافت معما:', err)
       }
     }
