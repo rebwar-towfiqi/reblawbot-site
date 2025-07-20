@@ -1,5 +1,3 @@
-
-
 import type { AppProps } from 'next/app';
 import { IntlProvider } from 'next-intl';
 import { useEffect } from 'react';
