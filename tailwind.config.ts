@@ -1,9 +1,12 @@
-import type { Config } from 'tailwindcss';
-import defaultTheme from 'tailwindcss/defaultTheme';
+import type { Config } from 'tailwindcss'
+import defaultTheme from 'tailwindcss/defaultTheme'
 
-export default {
+const config: Config = {
   darkMode: ['class'],
-  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  content: [
+    './src/**/*.{js,ts,jsx,tsx}',
+    './public/**/*.{html,js}'
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -11,17 +14,17 @@ export default {
       },
       colors: {
         primary: {
-          '50': 'rgb(var(--tw-color-primary-50) / <alpha-value>)',
-          '100': 'rgb(var(--tw-color-primary-100) / <alpha-value>)',
-          '200': 'rgb(var(--tw-color-primary-200) / <alpha-value>)',
-          '300': 'rgb(var(--tw-color-primary-300) / <alpha-value>)',
-          '400': 'rgb(var(--tw-color-primary-400) / <alpha-value>)',
-          '500': 'rgb(var(--tw-color-primary-500) / <alpha-value>)',
-          '600': 'rgb(var(--tw-color-primary-600) / <alpha-value>)',
-          '700': 'rgb(var(--tw-color-primary-700) / <alpha-value>)',
-          '800': 'rgb(var(--tw-color-primary-800) / <alpha-value>)',
-          '900': 'rgb(var(--tw-color-primary-900) / <alpha-value>)',
-          '950': 'rgb(var(--tw-color-primary-950) / <alpha-value>)',
+          50: 'rgb(var(--tw-color-primary-50) / <alpha-value>)',
+          100: 'rgb(var(--tw-color-primary-100) / <alpha-value>)',
+          200: 'rgb(var(--tw-color-primary-200) / <alpha-value>)',
+          300: 'rgb(var(--tw-color-primary-300) / <alpha-value>)',
+          400: 'rgb(var(--tw-color-primary-400) / <alpha-value>)',
+          500: 'rgb(var(--tw-color-primary-500) / <alpha-value>)',
+          600: 'rgb(var(--tw-color-primary-600) / <alpha-value>)',
+          700: 'rgb(var(--tw-color-primary-700) / <alpha-value>)',
+          800: 'rgb(var(--tw-color-primary-800) / <alpha-value>)',
+          900: 'rgb(var(--tw-color-primary-900) / <alpha-value>)',
+          950: 'rgb(var(--tw-color-primary-950) / <alpha-value>)',
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
         },
@@ -56,11 +59,11 @@ export default {
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         chart: {
-          '1': 'hsl(var(--chart-1))',
-          '2': 'hsl(var(--chart-2))',
-          '3': 'hsl(var(--chart-3))',
-          '4': 'hsl(var(--chart-4))',
-          '5': 'hsl(var(--chart-5))',
+          1: 'hsl(var(--chart-1))',
+          2: 'hsl(var(--chart-2))',
+          3: 'hsl(var(--chart-3))',
+          4: 'hsl(var(--chart-4))',
+          5: 'hsl(var(--chart-5))',
         },
       },
       keyframes: {
@@ -95,5 +98,10 @@ export default {
       },
     },
   },
-  plugins: [require('@tailwindcss/forms'), require('tailwindcss-animate')],
-} satisfies Config;
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('tailwindcss-animate'),
+  ],
+}
+
+export default config
