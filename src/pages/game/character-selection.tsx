@@ -1,39 +1,27 @@
-'use client';
+'use client'
 
-import { motion } from 'framer-motion';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { motion } from 'framer-motion'
+import Image from 'next/image'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
 
-import { useCharacter } from '@/context/CharacterContext';
+import { useCharacter } from '@/context/CharacterContext'
 
 const characters = [
-  {
-    id: 'lawyer1',
-    name: 'وکیل دانا',
-    image: '/images/lawyer1.png',
-  },
-  {
-    id: 'lawyer2',
-    name: 'وکیل شجاع',
-    image: '/images/lawyer2.png',
-  },
-  {
-    id: 'lawyer3',
-    name: 'وکیل باهوش',
-    image: '/images/lawyer3.png',
-  },
-];
+  { id: 'lawyer1', name: 'وکیل دانا', image: '/images/lawyer1.png' },
+  { id: 'lawyer2', name: 'وکیل شجاع', image: '/images/lawyer2.png' },
+  { id: 'lawyer3', name: 'وکیل باهوش', image: '/images/lawyer3.png' },
+]
 
 export default function CharacterSelect() {
-  const router = useRouter();
-  const { selectedCharacter, selectCharacter } = useCharacter();
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const router = useRouter()
+  const { selectedCharacter, selectCharacter } = useCharacter()
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
 
   const handleSelect = (id: string) => {
-    selectCharacter(id);
-    router.push('/game/role-selector');
-  };
+    selectCharacter(id)
+    router.push('/game/role-selector')
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-sky-100 to-white p-6">
@@ -43,7 +31,7 @@ export default function CharacterSelect() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
       >
-        شخصیت وکیل خود را انتخاب کنید
+        👨‍⚖️ شخصیت وکیل خود را انتخاب کنید
       </motion.h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -86,5 +74,5 @@ export default function CharacterSelect() {
         ))}
       </div>
     </div>
-  );
+  )
 }
