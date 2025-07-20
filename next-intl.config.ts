@@ -5,8 +5,3 @@ module.exports = {
   defaultLocale: 'en',
   timeZone: 'Asia/Tehran', // ✅ Fix for ENVIRONMENT_FALLBACK
 };
-
-
-
-
-

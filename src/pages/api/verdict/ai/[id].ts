@@ -20,7 +20,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     const stmt = db.prepare(
-      'SELECT vote, COUNT(*) as count FROM votes WHERE case_id = ? GROUP BY vote'
+      'SELECT vote, COUNT(*) as count FROM votes WHERE case_id = ? GROUP BY vote',
     );
     const rows = stmt.all(id);
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, ReactNode,useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useState } from 'react';
 
 // نوع کانتکست
 type CharacterContextType = {
@@ -9,11 +9,15 @@ type CharacterContextType = {
 };
 
 // ایجاد کانتکست با مقدار اولیه
-const CharacterContext = createContext<CharacterContextType | undefined>(undefined);
+const CharacterContext = createContext<CharacterContextType | undefined>(
+  undefined,
+);
 
 // پراوایدر کانتکست
 export const CharacterProvider = ({ children }: { children: ReactNode }) => {
-  const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
+  const [selectedCharacter, setSelectedCharacter] = useState<string | null>(
+    null,
+  );
 
   const selectCharacter = (id: string) => {
     setSelectedCharacter(id);

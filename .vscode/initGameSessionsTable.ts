@@ -1,9 +1,9 @@
-import path from "path";
-import { open } from "sqlite";
-import sqlite3 from "sqlite3";
+import path from 'path';
+import { open } from 'sqlite';
+import sqlite3 from 'sqlite3';
 
 async function initGameSessionsTable() {
-  const dbPath = path.join(__dirname, "../data/game_cases.db");
+  const dbPath = path.join(__dirname, '../data/game_cases.db');
 
   const db = await open({
     filename: dbPath,
@@ -30,5 +30,5 @@ async function initGameSessionsTable() {
 
 initGameSessionsTable().catch((error) => {
   // eslint-disable-next-line no-console
-  console.error("❌ Failed to create game_sessions table:", error);
+  console.error('❌ Failed to create game_sessions table:', error);
 });

@@ -2,7 +2,10 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { open } from 'sqlite';
 import sqlite3 from 'sqlite3';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -22,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await db.run(
       `INSERT INTO verdicts (case_id, telegram_id, name, role, vote, argument)
        VALUES (?, ?, ?, ?, ?, ?)`,
-      [case_id, telegram_id, name, role, vote, argument]
+      [case_id, telegram_id, name, role, vote, argument],
     );
 
     return res.status(200).json({ message: 'Submission saved successfully' });

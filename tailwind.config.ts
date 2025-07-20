@@ -1,12 +1,9 @@
-import type { Config } from 'tailwindcss'
-import defaultTheme from 'tailwindcss/defaultTheme'
+import type { Config } from 'tailwindcss';
+import defaultTheme from 'tailwindcss/defaultTheme';
 
 const config: Config = {
   darkMode: ['class'],
-  content: [
-    './src/**/*.{js,ts,jsx,tsx}',
-    './public/**/*.{html,js}'
-  ],
+  content: ['./src/**/*.{js,ts,jsx,tsx}', './public/**/*.{html,js}'],
   theme: {
     extend: {
       fontFamily: {
@@ -98,10 +95,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('tailwindcss-animate'),
-  ],
-}
+  plugins: [require('@tailwindcss/forms'), require('tailwindcss-animate')],
+};
 
-export default config
+export default config;

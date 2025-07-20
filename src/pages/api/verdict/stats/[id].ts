@@ -4,7 +4,10 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { open } from 'sqlite';
 import sqlite3 from 'sqlite3';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
   const { id } = req.query;
 
   try {
@@ -17,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       `SELECT vote, COUNT(*) as count FROM verdicts
        WHERE case_id = ?
        GROUP BY vote`,
-      [id]
+      [id],
     );
 
     const stats = {

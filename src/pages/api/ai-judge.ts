@@ -8,7 +8,10 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
@@ -26,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const argumentsData = await db.all(
       'SELECT vote, argument FROM arguments WHERE case_id = ?',
-      [case_id]
+      [case_id],
     );
 
     const plaintiffArguments = argumentsData

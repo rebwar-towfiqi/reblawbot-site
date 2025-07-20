@@ -1,19 +1,19 @@
-import { ReactNode } from 'react'
+import { ReactNode } from 'react';
 
-import { getMessages } from '@/lib/messages'
+import { getMessages } from '@/lib/messages';
 
-import Providers from '@/components/Providers'
+import Providers from '@/components/Providers';
 
 type Props = {
-  children: ReactNode
-  params: { locale: string }
-}
+  children: ReactNode;
+  params: { locale: string };
+};
 
 export default async function LocaleLayout({
   children,
   params: { locale },
 }: Props) {
-  const messages = await getMessages(locale)
+  const messages = await getMessages(locale);
 
   return (
     <html lang={locale}>
@@ -23,5 +23,5 @@ export default async function LocaleLayout({
         </Providers>
       </body>
     </html>
-  )
+  );
 }

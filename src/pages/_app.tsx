@@ -9,7 +9,8 @@ import '@/styles/globals.css';
 export default function App({ Component, pageProps }: AppProps) {
   // تنظیم رنگ پس‌زمینه برای کل سایت
   useEffect(() => {
-    document.body.style.background = 'linear-gradient(to bottom, #f0f4f8, #ffffff)';
+    document.body.style.background =
+      'linear-gradient(to bottom, #f0f4f8, #ffffff)';
   }, []);
 
   return (

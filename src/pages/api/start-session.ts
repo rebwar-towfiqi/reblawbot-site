@@ -1,41 +1,44 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import path from 'path'
-import { open } from 'sqlite'
-import sqlite3 from 'sqlite3'
+import type { NextApiRequest, NextApiResponse } from 'next';
+import path from 'path';
+import { open } from 'sqlite';
+import sqlite3 from 'sqlite3';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'متد مجاز نیست' })
+    return res.status(405).json({ error: 'متد مجاز نیست' });
   }
 
-  const { case_id, telegram_id, name } = req.body
+  const { case_id, telegram_id, name } = req.body;
 
   if (!case_id || !telegram_id || !name) {
-    return res.status(400).json({ error: 'اطلاعات ناقص است' })
+    return res.status(400).json({ error: 'اطلاعات ناقص است' });
   }
 
   const db = await open({
     filename: path.join(process.cwd(), 'src/data/game_cases.db'),
-    driver: sqlite3.Database
-  })
+    driver: sqlite3.Database,
+  });
 
   try {
     // آیا جلسه‌ای با این کاربر قبلاً وجود دارد؟
     const existing = await db.get(
       `SELECT * FROM game_sessions WHERE case_id = ? AND telegram_id = ?`,
       case_id,
-      telegram_id
-    )
+      telegram_id,
+    );
 
     if (existing) {
-      return res.status(200).json({ message: 'شما قبلاً وارد این پرونده شده‌اید', session: existing })
+      return res.status(200).json({
+        message: 'شما قبلاً وارد این پرونده شده‌اید',
+        session: existing,
+      });
     }
 
     // به صورت تصادفی نقش را انتخاب کن
-    const role = Math.random() > 0.5 ? 'plaintiff' : 'defendant'
+    const role = Math.random() > 0.5 ? 'plaintiff' : 'defendant';
 
     const result = await db.run(
       `INSERT INTO game_sessions (case_id, telegram_id, name, role, started_at)
@@ -43,8 +46,8 @@ export default async function handler(
       case_id,
       telegram_id,
       name,
-      role
-    )
+      role,
+    );
 
     return res.status(201).json({
       message: 'جلسه جدید آغاز شد',
@@ -53,12 +56,12 @@ export default async function handler(
         case_id,
         telegram_id,
         name,
-        role
-      }
-    })
+        role,
+      },
+    });
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.error('❌ خطا در ایجاد جلسه:', e)
-    return res.status(500).json({ error: 'خطای داخلی سرور' })
+    console.error('❌ خطا در ایجاد جلسه:', e);
+    return res.status(500).json({ error: 'خطای داخلی سرور' });
   }
 }
