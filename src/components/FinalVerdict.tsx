@@ -2,6 +2,7 @@
 
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -68,12 +69,12 @@ export default function FinalVerdict() {
         <p className='text-lg font-semibold text-center mb-4'>{verdictText}</p>
 
         <div className='text-center mt-4'>
-          <a
+          <Link
             href='/'
             className='text-blue-600 underline hover:text-blue-800 transition'
           >
             🔙 بازگشت به خانه
-          </a>
+          </Link>
         </div>
       </motion.div>
     </div>
