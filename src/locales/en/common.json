@@ -1,3 +1,4 @@
+
 {
   "home": "Home",
   "about": "About",
@@ -5,5 +6,10 @@
   "contact": "Contact",
   "intro_title": "AI-powered Legal Bot for Everyone!",
   "intro_desc": "Legal Q&A, search Iranian and international laws, buy subscription with crypto or card.",
-  "go_to_bot": "Go to Telegram Bot"
+  "go_to_bot": "Go to Telegram Bot",
+  "game_home_title": "Legal Debate Arena",
+  "game_home_subtitle": "Step into the courtroom, pick your role, and argue your case in front of a global audience and our AI judge.",
+  "choose_case": "Choose a Legal Case",
+  "about_description": "RebLawBot is an AI-powered legal platform offering legal consultation, access to laws, and educational tools for justice."
+
 }
