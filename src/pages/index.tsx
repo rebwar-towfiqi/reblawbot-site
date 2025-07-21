@@ -41,9 +41,12 @@ export default function HomePage() {
 }
 
 export async function getStaticProps({ locale }: GetStaticPropsContext) {
+  const messages = (await import(`../public/locales/${locale}/common.json`)).default;
+
   return {
     props: {
-      messages: (await import(`../locales/${locale}/common.json`)).default,
-    },
+      messages,
+      locale
+    }
   };
 }
