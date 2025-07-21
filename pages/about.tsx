@@ -1,29 +1,34 @@
+// 📄 src/pages/about.tsx
+
+import { GetStaticPropsContext } from 'next';
+import Head from 'next/head';
 import { useTranslations } from 'next-intl';
+import { getMessages } from 'next-intl/server';
 
-import Header from '../components/Header';
-
-export default function About() {
+export default function AboutPage() {
   const t = useTranslations('common');
 
   return (
     <>
-      <Header />
-      <main className='container mx-auto px-6 py-12'>
-        <h1 className='text-4xl font-bold mb-6'>{t('navAbout')}</h1>
-        <p className='text-lg text-gray-700 dark:text-gray-300 leading-relaxed max-w-3xl mx-auto'>
-          {t('aboutDescription')}
-        </p>
+      <Head>
+        <title>{t('about')}</title>
+      </Head>
+
+      <main className='p-10 max-w-3xl mx-auto text-center'>
+        <h1 className='text-3xl font-bold mb-4'>{t('about')}</h1>
+        <p className='text-gray-600'>{t('about_description')}</p>
       </main>
     </>
   );
 }
 
-export async function getStaticProps({ locale }: { locale: string }) {
+export async function getStaticProps({ locale }: GetStaticPropsContext) {
+  const messages = await getMessages({ locale });
+
   return {
     props: {
+      messages,
       locale,
-      messages: (await import(`../public/locales/${locale}/common.json`))
-        .default,
     },
   };
 }
