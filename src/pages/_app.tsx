@@ -1,17 +1,21 @@
-// pages/_app.tsx
 import type { AppProps } from 'next/app';
 import { IntlProvider } from 'next-intl';
 
 import '@/styles/globals.css';
 
-export default function App({ Component, pageProps }: AppProps) {
+import Footer from '../components/Footer';
+import Navbar from '../components/Navbar';
+
+function MyApp({ Component, pageProps, router }: AppProps) {
+  // استخراج نام زبان از آدرس (fa/en/ku)
+  const locale = router.locale || 'fa';
   return (
-    <IntlProvider
-      locale={pageProps.locale}
-      messages={pageProps.messages}
-      timeZone="Asia/Tehran"
-    >
+    <IntlProvider locale={locale} messages={pageProps.messages}>
+      <Navbar />
       <Component {...pageProps} />
+      <Footer />
     </IntlProvider>
   );
 }
+
+export default MyApp;
