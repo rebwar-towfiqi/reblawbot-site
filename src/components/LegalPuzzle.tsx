@@ -55,9 +55,9 @@ export default function LegalPuzzle() {
           🎉 همه معماها حل شد!
         </h2>
         <p className='mb-4'>اکنون می‌توانی به مرحله بعدی پرونده بروی.</p>
-        <a href='/game/hearing-room' className='text-blue-600 underline'>
+        <link href='/game/hearing-room' className='text-blue-600 underline'>
           🔁 بازگشت به دادگاه
-        </a>
+        </link>
       </div>
     );
   }
