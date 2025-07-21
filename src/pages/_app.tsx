@@ -1,22 +1,23 @@
-import type { AppProps } from 'next/app';
-import { IntlProvider } from 'next-intl';
-import { useEffect } from 'react';
 
-import '@/styles/globals.css';
+ import type { AppProps } from 'next/app';
+ import { useRouter } from 'next/router';
+ import { NextIntlClientProvider } from 'next-intl';
+ import { useEffect } from 'react';
 
-export default function App({ Component, pageProps }: AppProps) {
-  useEffect(() => {
-    document.body.style.background =
-      'linear-gradient(to bottom, #f0f4f8, #ffffff)';
-  }, []);
+ export default function App({ Component, pageProps }: AppProps) {
+   const router = useRouter();
 
-  return (
-    <IntlProvider
-      locale={pageProps.locale || 'fa'}
+   useEffect(() => {
+     document.body.style.background =
+       'linear-gradient(to bottom, #f0f4f8, #ffffff)';
+   }, []);
+return (
+   <NextIntlClientProvider
+      // صفحه‌ای که locale را از getStaticProps می‌گیرد
+      locale={pageProps.locale || router.locale || 'fa'}
       messages={pageProps.messages || {}}
-      timeZone='Asia/Tehran'
-    >
+      timeZone='Asia/Tehran'   >
       <Component {...pageProps} />
-    </IntlProvider>
-  );
-}
+    </NextIntlClientProvider>
+ );
+ }
