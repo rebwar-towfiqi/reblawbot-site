@@ -1,5 +1,7 @@
+import { GetStaticPropsContext } from 'next';
 import Head from 'next/head';
 import { useTranslations } from 'next-intl';
+import { getMessages } from 'next-intl/server';
 
 export default function Contact() {
   const t = useTranslations('contact');
@@ -31,4 +33,14 @@ export default function Contact() {
       </main>
     </>
   );
+}
+
+export async function getStaticProps({ locale }: GetStaticPropsContext) {
+  const messages = await getMessages({ locale, namespace: 'contact' });
+  return {
+    props: {
+      messages,
+      locale
+    }
+  };
 }

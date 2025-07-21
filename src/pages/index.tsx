@@ -12,9 +12,8 @@ export default function HomePage() {
   return (
     <>
       <Head>
-        <title>{t('home_title')}</title>
-        <meta name='description' content={t('home_description')} />
-        <link rel='icon' href='/favicon.ico' />
+        <title>{t('intro_title')}</title>
+        <meta name='description' content={t('intro_desc')} />
       </Head>
 
       <motion.main
@@ -23,19 +22,13 @@ export default function HomePage() {
         transition={{ duration: 0.6 }}
         className='flex flex-col items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8'
       >
-        <h1 className='text-3xl sm:text-4xl font-bold text-center mb-4 text-gray-800'>
-          ⚖️ {t('home_title')}
-        </h1>
-
-        <p className='mt-2 text-gray-600 max-w-xl text-center'>
-          {t('home_subtitle')}
-        </p>
-
+        <h1 className='text-4xl font-bold text-center mb-6'>{t('intro_title')}</h1>
+        <p className='text-lg text-center text-gray-600 mb-4'>{t('intro_desc')}</p>
         <Link
           href='/game/role-selector'
-          className='mt-8 inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-xl shadow'
+          className='mt-4 bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg shadow'
         >
-          {t('start_game')}
+          {t('choose_case')}
         </Link>
       </motion.main>
     </>
@@ -43,12 +36,19 @@ export default function HomePage() {
 }
 
 export async function getStaticProps({ locale }: GetStaticPropsContext) {
-  const messages = await getMessages({ locale });
-
-  return {
-    props: {
-      messages,
-      locale
-    }
-  };
+  try {
+    const messages = await getMessages({ locale });
+    console.log(`✅ Loaded messages for locale: ${locale}`);
+    return {
+      props: {
+        messages,
+        locale
+      }
+    };
+  } catch (error) {
+    console.error(`❌ Failed to load messages for locale ${locale}:`, error);
+    return {
+      notFound: true
+    };
+  }
 }
