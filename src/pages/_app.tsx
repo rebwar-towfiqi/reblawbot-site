@@ -1,17 +1,17 @@
 // pages/_app.tsx
 import type { AppProps } from 'next/app';
-import { IntlProvider } from 'next-intl';
+import { NextIntlProvider } from 'next-intl'; // ✅ اصلاح این خط
 
 import '@/styles/globals.css';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <IntlProvider
-      locale={pageProps.locale}
+    <NextIntlProvider
       messages={pageProps.messages}
       timeZone="Asia/Tehran"
+      locale={pageProps.locale}
     >
       <Component {...pageProps} />
-    </IntlProvider>
+    </NextIntlProvider>
   );
 }
