@@ -1,8 +1,10 @@
+// 📄 src/pages/index.tsx
 import { motion } from 'framer-motion';
 import { GetStaticPropsContext } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { getMessages } from 'next-intl/server';
 
 export default function HomePage() {
   const t = useTranslations('common');
@@ -41,7 +43,7 @@ export default function HomePage() {
 }
 
 export async function getStaticProps({ locale }: GetStaticPropsContext) {
-  const messages = (await import(`../public/locales/${locale}/common.json`)).default;
+  const messages = await getMessages({ locale });
 
   return {
     props: {
