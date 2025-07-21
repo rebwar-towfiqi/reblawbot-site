@@ -1,20 +1,17 @@
 // pages/_app.tsx
-'use client';
-
 import type { AppProps } from 'next/app';
-import { useRouter } from 'next/router';
-import { NextIntlClientProvider } from 'next-intl';
+import { IntlProvider } from 'next-intl';
+
+import '@/styles/globals.css';
 
 export default function App({ Component, pageProps }: AppProps) {
-  const router = useRouter();
-
   return (
-    <NextIntlClientProvider
-      locale={router.locale}
+    <IntlProvider
+      locale={pageProps.locale}
       messages={pageProps.messages}
       timeZone="Asia/Tehran"
     >
       <Component {...pageProps} />
-    </NextIntlClientProvider>
+    </IntlProvider>
   );
 }
