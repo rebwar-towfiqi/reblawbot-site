@@ -13,9 +13,9 @@ export default function AboutPage() {
         <title>{t('title')}</title>
       </Head>
 
-      <main className='p-10 max-w-3xl mx-auto text-center'>
-        <h1 className='text-3xl font-bold mb-4'>{t('title')}</h1>
-        <p className='text-gray-600'>{t('description')}</p>
+      <main className="p-10 max-w-3xl mx-auto text-center">
+        <h1 className="text-3xl font-bold mb-4">{t('title')}</h1>
+        <p className="text-gray-600">{t('description')}</p>
       </main>
     </>
   );
