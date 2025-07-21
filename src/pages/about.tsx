@@ -1,23 +1,36 @@
+// 📄 src/pages/about.tsx
+
+import { GetStaticPropsContext } from 'next';
 import Head from 'next/head';
 import { useTranslations } from 'next-intl';
+import { getMessages } from 'next-intl/server';
 
-export default function About() {
-  const t = useTranslations('about');
+export default function AboutPage() {
+  const t = useTranslations('common');
 
   return (
     <>
       <Head>
-        <title>{t('title')} | RebLawBot</title>
+        <title>{t('about')}</title>
       </Head>
-      <main className='flex min-h-screen flex-col items-center justify-center bg-gray-50'>
-        <div className='mt-20 max-w-lg rounded-2xl bg-white p-8 text-center shadow'>
-          <h1 className='mb-4 text-2xl font-bold text-blue-700'>
-            {t('heading')}
-          </h1>
-          <p className='mb-2 text-gray-700'>{t('description')}</p>
-          <p className='text-sm text-gray-500'>{t('credits')}</p>
-        </div>
+
+      <main className="p-10 max-w-3xl mx-auto text-center">
+        <h1 className="text-3xl font-bold mb-4">{t('about')}</h1>
+        <p className="text-gray-600">
+          {t('about_description')}
+        </p>
       </main>
     </>
   );
+}
+
+export async function getStaticProps({ locale }: GetStaticPropsContext) {
+  const messages = await getMessages({ locale });
+
+  return {
+    props: {
+      messages,
+      locale
+    }
+  };
 }

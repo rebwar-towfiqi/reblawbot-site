@@ -9,5 +9,7 @@
   "go_to_bot": "Go to Telegram Bot",
   "game_home_title": "Legal Debate Arena",
   "game_home_subtitle": "Step into the courtroom, pick your role, and argue your case in front of a global audience and our AI judge.",
-  "choose_case": "Choose a Legal Case"
+  "choose_case": "Choose a Legal Case",
+  "about_description": "RebLawBot is an AI-powered legal platform offering legal consultation, access to laws, and educational tools for justice."
+
 }
