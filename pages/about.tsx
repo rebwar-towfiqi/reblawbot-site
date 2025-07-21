@@ -1,9 +1,8 @@
-// 📄 src/pages/about.tsx
+// pages/about.tsx
 
 import { GetStaticPropsContext } from 'next';
 import Head from 'next/head';
 import { useTranslations } from 'next-intl';
-import { getMessages } from 'next-intl/server';
 
 export default function AboutPage() {
   const t = useTranslations('common');
@@ -23,11 +22,9 @@ export default function AboutPage() {
 }
 
 export async function getStaticProps({ locale }: GetStaticPropsContext) {
-  const messages = await getMessages({ locale });
-
   return {
     props: {
-      messages,
+      messages: (await import(`../public/locales/${locale}/common.json`)).default,
       locale,
     },
   };
