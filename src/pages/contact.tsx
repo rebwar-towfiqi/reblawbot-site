@@ -36,7 +36,7 @@ export default function Contact() {
 }
 
 export async function getStaticProps({ locale }: GetStaticPropsContext) {
-  const messages = await getMessages({ locale, namespace: 'contact' });
+  const messages = await getMessages({ locale });
   return {
     props: {
       messages,

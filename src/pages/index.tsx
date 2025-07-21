@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // 📄 src/pages/index.tsx
 import { motion } from 'framer-motion';
 import { GetStaticPropsContext } from 'next';
