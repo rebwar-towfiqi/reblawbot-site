@@ -40,8 +40,9 @@ export default function GameHome() {
 export async function getStaticProps({ locale }: GetStaticPropsContext) {
   return {
     props: {
-      messages: (await import(`../../../public/locales/${locale}/common.json`)).default,
-      locale
-    }
+      messages: (await import(`../../../public/locales/${locale}/common.json`))
+        .default,
+      locale,
+    },
   };
 }

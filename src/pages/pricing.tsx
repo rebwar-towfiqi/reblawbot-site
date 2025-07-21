@@ -13,7 +13,9 @@ export default function Pricing() {
       </Head>
       <main className='flex min-h-screen flex-col items-center justify-center bg-gray-50'>
         <div className='mt-20 max-w-lg rounded-2xl bg-white p-8 text-center shadow'>
-          <h1 className='mb-4 text-2xl font-bold text-blue-700'>{t('pricing')}</h1>
+          <h1 className='mb-4 text-2xl font-bold text-blue-700'>
+            {t('pricing')}
+          </h1>
           <ul className='mb-6 space-y-4 text-right text-gray-700'>
             <li>
               <strong>یک ماهه:</strong>
@@ -24,7 +26,8 @@ export default function Pricing() {
             <li>
               <strong>مزایا:</strong>
               <span className='text-gray-600'>
-                پاسخ نامحدود به سوالات حقوقی، جستجوی کامل، دسترسی به قوانین و پرونده‌های مهم
+                پاسخ نامحدود به سوالات حقوقی، جستجوی کامل، دسترسی به قوانین و
+                پرونده‌های مهم
               </span>
             </li>
             <li>
@@ -53,7 +56,7 @@ export async function getStaticProps({ locale }: GetStaticPropsContext) {
   return {
     props: {
       messages,
-      locale
-    }
+      locale,
+    },
   };
 }

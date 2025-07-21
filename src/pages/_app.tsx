@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 import '@/styles/globals.css';
 
 export default function App({ Component, pageProps }: AppProps) {
-
   useEffect(() => {
     document.body.style.background =
       'linear-gradient(to bottom, #f0f4f8, #ffffff)';
@@ -15,7 +14,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <IntlProvider
       locale={pageProps.locale || 'fa'}
       messages={pageProps.messages || {}}
-      timeZone="Asia/Tehran"
+      timeZone='Asia/Tehran'
     >
       <Component {...pageProps} />
     </IntlProvider>
